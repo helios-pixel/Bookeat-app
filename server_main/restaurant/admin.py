@@ -3,4 +3,4 @@ from .models import Resturent, ResturentMenu, ResturentTables, CustomerPurchase,
 
 # Register your models here.
 
-admin.site.register(Resturent, ResturentMenu, ResturentTables, CustomerPurchase, CustomerTableBooking)
+admin.site.register((Resturent, ResturentMenu, ResturentTables, CustomerPurchase, CustomerTableBooking))

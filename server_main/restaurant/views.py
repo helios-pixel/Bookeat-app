@@ -83,22 +83,116 @@ def create_resturent_table(request):
         }})
 
 def create_customer_purchase(request):
-    pass
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        restaurant = data['restaurant']
+        customer = data['customer']
+        purchased_items = data['purchased_items']
+        is_paid = data['is_paid']
+        is_delivered = data['is_delivered']
+        is_cancelled = data['is_cancelled']
+
+        resturent = Resturent.objects.filter(id=restaurant).first()
+        customer = Customer.objects.filter(id=customer).first()
+
+        if resturent is None:
+            return JsonResponse({'status': 'failed', 'message': 'invalid resturent'})
+        if customer is None:
+            return JsonResponse({'status': 'failed', 'message': 'invalid customer'})
+        
+        customer_purchase = CustomerPurchase.objects.create(resturent=resturent, customer=customer, is_paid=is_paid, is_delivered=is_delivered, is_cancelled=is_cancelled)
+        customer_purchase.save()
+
+        for item in purchased_items:
+            resturent_menu = ResturentMenu.objects.filter(id=item).first()
+            if resturent_menu is None:
+                return JsonResponse({'status': 'failed', 'message': 'invalid resturent menu'})
+            customer_purchase.purchased_items.add(resturent_menu)
+
+        return JsonResponse({'status': 'success', 'message': 'customer purchase created successfully', "data" : {
+            "id": customer_purchase.id,
+            "is_paid": customer_purchase.is_paid,
+            "is_delivered": customer_purchase.is_delivered,
+            "is_cancelled": customer_purchase.is_cancelled,
+        }})
 
 def create_customer_table_booking(request):
     pass
 
 def get_resturent(request):
-    pass
+    if request.method == 'GET':
+        resturent = Resturent.objects.all()
+        if resturent is None:
+            return JsonResponse({'status': 'failed', 'message': 'invalid resturent'})
+        return JsonResponse({'status': 'success', 'message': 'resturent fetched successfully', "data" : {
+            "id": resturent.id,
+            "name": resturent.name,
+            "address": resturent.address,
+            "table": resturent.table,
+            "is_active": resturent.is_active,
+        }})
 
 def get_resturent_menu(request):
-    pass
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        resturent = data['resturent']
+
+        resturent = Resturent.objects.filter(id=resturent).first()
+
+        if resturent is None:
+            return JsonResponse({'status': 'failed', 'message': 'invalid resturent'})
+        
+        resturent_menu = ResturentMenu.objects.filter(resturent=resturent)
+        if resturent_menu is None:
+            return JsonResponse({'status': 'failed', 'message': 'invalid resturent menu'})
+        return JsonResponse({'status': 'success', 'message': 'resturent menu fetched successfully', "data" : {
+            "id": resturent_menu.id,
+            "name": resturent_menu.name,
+            "food_image": resturent_menu.food_image,
+            "description": resturent_menu.description,
+            "price": resturent_menu.price,
+            "is_active": resturent_menu.is_active,
+            "stock": resturent_menu.stock,
+        }})
 
 def get_resturent_table(request):
-    pass
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        resturent = data['resturent']
+
+        resturent = Resturent.objects.filter(id=resturent).first()
+
+        if resturent is None:
+            return JsonResponse({'status': 'failed', 'message': 'invalid resturent'})
+        
+        resturent_table = ResturentTables.objects.filter(resturent=resturent)
+        if resturent_table is None:
+            return JsonResponse({'status': 'failed', 'message': 'invalid resturent table'})
+        return JsonResponse({'status': 'success', 'message': 'resturent table fetched successfully', "data" : {
+            "id": resturent_table.id,
+            "table_number": resturent_table.table_number,
+            "is_available": resturent_table.is_available,
+        }})
 
 def get_customer_purchase(request):
-    pass
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        customer = data['customer']
+
+        customer = Customer.objects.filter(id=customer).first()
+
+        if customer is None:
+            return JsonResponse({'status': 'failed', 'message': 'invalid customer'})
+        
+        customer_purchase = CustomerPurchase.objects.filter(customer=customer)
+        if customer_purchase is None:
+            return JsonResponse({'status': 'failed', 'message': 'invalid customer purchase'})
+        return JsonResponse({'status': 'success', 'message': 'customer purchase fetched successfully', "data" : {
+            "id": customer_purchase.id,
+            "is_paid": customer_purchase.is_paid,
+            "is_delivered": customer_purchase.is_delivered,
+            "is_cancelled": customer_purchase.is_cancelled,
+        }})
 
 def get_customer_table_booking(request):
     pass

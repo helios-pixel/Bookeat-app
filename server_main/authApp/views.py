@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from .models import Customer, ResturentOwner
 from django.http import JsonResponse
 import re
+from base.helpers import *
+import json
 # Create your views here.
 
 def create_customer(request):
@@ -10,28 +12,31 @@ def create_customer(request):
         """
         taking all the required data from the request
         """
-        password = request.POST.get('password')
-        email = request.POST.get('email')
-        phone = request.POST.get('phone')
-        address = request.POST.get('address')
-        first_name, last_name = request.POST.get('name').split(' ')
+        data = json.loads(request.body.decode('utf-8'))
+        first_name, last_name = data.get('name').split(' ')
+        phone = data.get('phone')
+        password = data.get('password')
+        address = data.get('address')
+        confirm_password = data.get('confirm_password')
+        
+        if password != confirm_password:
+            return JsonResponse({'status': 'failed', 'message': 'password and confirm password does not match'})
         """
-        validate the email and phone number
+        validate the phone number
         """
-        is_valid_email = re.search(r'[\w.-]+@[\w.-]+.\w+', email)
-        if not is_valid_email:
-            return JsonResponse({'status': 'failed', 'message': 'invalid email'})
-        is_valid_phone = re.search(r'^[0-9]{10}$', phone)
+        is_valid_phone = is_valid_phone(phone)
         if not is_valid_phone:
             return JsonResponse({'status': 'failed', 'message': 'invalid phone number'})
         """
         create the user and customer
         """
-        user = User.objects.create_user(username=email, password=password, email=email, first_name=first_name, last_name=last_name)
+        user = User.objects.create(username=phone, first_name=first_name, last_name=last_name)
+        user.set_password(password)
         otp = create_otp()
         user.save()
         customer = Customer.objects.create(profile=user, phone_number=phone, address=address, otp=otp)
         customer.save()
+        #send_otp(phone, otp)
         """
         sending a final response
         """
@@ -43,34 +48,39 @@ def create_customer(request):
             "address": customer.address,
             "otp": customer.otp,
         }})
+    return JsonResponse({'status': 'error', 'message': 'Invalid Request'})
 
 def create_resturent_owner(request):
     if request.method == "POST":
         """
         taking all the required data from the request
         """
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        phone = request.POST.get('phone')
-        first_name, last_name = request.POST.get('name').split(' ')
-
+        data = json.loads(request.body.decode('utf-8'))
+        first_name, last_name = data.get('name').split(' ')
+        phone = data.get('phone')
+        password = data.get('password')
+        confirm_password = data.get('confirm_password')
         """
         validate the email and phone number
         """
-        is_valid_email = re.search(r'[\w.-]+@[\w.-]+.\w+', email)
-        if not is_valid_email:
-            return JsonResponse({'status': 'failed', 'message': 'invalid email'})
-        is_valid_phone = re.search(r'^[0-9]{10}$', phone)
+        
+        is_valid_phone = is_valid_phone(phone)
         if not is_valid_phone:
             return JsonResponse({'status': 'failed', 'message': 'invalid phone number'})
+        
+        if(password!=confirm_password):
+            return JsonResponse({'status': 'failed', 'message': 'password and confirm password does not match'})
         """
         create the user and resturent owner
         """
-        user = User.objects.create_user(username=email, password=password, email=email, first_name=first_name, last_name=last_name)
+        # transaction
+        user = User.objects.create(username=phone, first_name=first_name, last_name=last_name)
+        user.set_password(password)
         otp = create_otp()
         user.save()
         resturent_owner = ResturentOwner.objects.create(profile=user, phone_number=phone, otp=otp)
         resturent_owner.save()
+        # send_otp(phone, otp)
         """
         sending a final response
         """
@@ -81,6 +91,7 @@ def create_resturent_owner(request):
             "phone": resturent_owner.phone_number,
             "otp": resturent_owner.otp,
         }})
+    return JsonResponse({'status': 'error', 'message': 'Invalid Request'})
     
 
 def customerLogin(request):
@@ -88,81 +99,68 @@ def customerLogin(request):
         """
         taking all the required data from the request
         """
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        phone = request.POST.get('phone')
+        data = json.loads(request.body.decode('utf-8'))
+        phone = data.get('phone')
+        password = data.get('password')
         """
-        validate the email and phone number
+        validate phone number
         """
-        is_valid_email = re.search(r'[\w.-]+@[\w.-]+.\w+', email)
-        if not is_valid_email:
-            return JsonResponse({'status': 'failed', 'message': 'invalid email'})
         """
         create the user and resturent owner
         """
-        if email:
-            user = User.objects.filter(username=email).first()
-            if not user:
-                return JsonResponse({'status': 'failed', 'message': 'invalid email'})
-            customer = Customer.objects.filter(profile=user).first()
         if phone:
-            customer = Customer.objects.filter(phone_number=phone).first()
+            user = User.objects.filter(username=phone).first()
+            if not user:
+                return JsonResponse({'status': 'failed', 'message': 'phone number does not exist'})
+            if(user.check_password(password)):
+                return JsonResponse({'status': 'failed', 'message': 'Password Incorrect'})
+            customer = Customer.objects.filter(profile=user).first()
             if not customer:
-                return JsonResponse({'status': 'failed', 'message': 'invalid phone number'})
-        if not customer:
-            return JsonResponse({'status': 'failed', 'message': 'invalid credentials'})
+                return JsonResponse({'status': 'failed', 'message': 'invalid credentials'})
         """
         sending a final response
         """
         return JsonResponse({'status': 'success', 'message': 'customer logged in successfully', "data" : {
             "id": customer.id,
             "username": customer.profile.username,
-            "email": customer.profile.email,
             "phone": customer.phone_number,
             "address": customer.address
         }})
+    return JsonResponse({'status': 'error', 'message': 'Invalid Request'})
     
 def restaurantOwnerLogin(request):
     if request.method == "POST":
         """
         taking all the required data from the request
         """
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        phone = request.POST.get('phone')
+        data = json.loads(request.body.decode('utf-8'))
+        phone = data.get('phone')
+        password = data.get('password')
         """
-        validate the email and phone number
+        validate phone number
         """
-        is_valid_email = re.search(r'[\w.-]+@[\w.-]+.\w+', email)
-        if not is_valid_email:
-            return JsonResponse({'status': 'failed', 'message': 'invalid email'})
+        is_valid_phone = is_valid_phone(phone)
+        if not is_valid_phone:
+            return JsonResponse({'status': 'failed', 'message': 'invalid phone number'})
+        if(user.check_password(password)):
+            return JsonResponse({'status': 'failed', 'message': 'Password Incorrect'})
+        
         """
         create the user and resturent owner
         """
-        if email:
-            user = User.objects.filter(username=email).first()
-            if not user:
-                return JsonResponse({'status': 'failed', 'message': 'invalid email'})
-            restaurantOwner = ResturentOwner.objects.filter(profile=user).first()
         if phone:
-            restaurantOwner = ResturentOwner.objects.filter(phone_number=phone).first()
+            user = User.objects.filter(username=phone).first()
+            if not user:
+                return JsonResponse({'status': 'failed', 'message': 'User does not exist'})
+            restaurantOwner = ResturentOwner.objects.filter(profile=user).first()
             if not restaurantOwner:
-                return JsonResponse({'status': 'failed', 'message': 'invalid phone number'})
-            
-        if not restaurantOwner:
-            return JsonResponse({'status': 'failed', 'message': 'invalid credentials'})
+                return JsonResponse({'status': 'failed', 'message': 'invalid credentials'})
         """
         sending a final response
         """
         return JsonResponse({'status': 'success', 'message': 'resturent owner logged in successfully', "data" : {
             "id": restaurantOwner.id,
             "username": restaurantOwner.profile.username,
-            "email": restaurantOwner.profile.email,
             "phone": restaurantOwner.phone_number,
         }})
-
-        
-        
-
-def create_otp():
-    pass
+    return JsonResponse({'status': 'error', 'message': 'Invalid Request'})

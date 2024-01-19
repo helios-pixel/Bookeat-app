@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Resturent, ResturentMenu, ResturentTables, CustomerPurchase, CustomerTableBooking
+from .models import *
 
 # Register your models here.
 
-admin.site.register((Resturent, ResturentMenu, ResturentTables, CustomerPurchase, CustomerTableBooking))
+admin.site.register((Resturent, ResturentFoodItem , ResturentTables , CustomerPurchase, CustomerOrderItem , CustomerTableBooking))

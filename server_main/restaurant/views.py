@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 import json
-from .models import Resturent, ResturentMenu, ResturentTables, CustomerPurchase, CustomerTableBooking
-from authApp.models import ResturentOwner, Customer
+from .models import *
+from authApp.models import *
 
 # Create your views here.
 
@@ -9,10 +9,9 @@ from authApp.models import ResturentOwner, Customer
 def create_resturent(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
-        restaurantOwner = data['restaurantOwner']
+        restaurantOwner = data['restaurantOwnerId']
         name = data['name']
         address = data['address']
-        table = int(data['table'])
         is_active = data['is_active']
 
         restaurant_owner = ResturentOwner.objects.filter(id=restaurantOwner).first()
@@ -20,7 +19,7 @@ def create_resturent(request):
         if restaurant_owner is None:
             return JsonResponse({'status': 'failed', 'message': 'invalid restaurant owner'})
         
-        resturent = Resturent.objects.create(resturent_owner=restaurant_owner, name=name, address=address, table=table, is_active=is_active)
+        resturent = Resturent.objects.create(resturent_owner=restaurant_owner, name=name, address=address, is_active=is_active)
         resturent.save()
 
         return JsonResponse({'status': 'success', 'message': 'resturent created successfully', "data" : {
@@ -35,7 +34,8 @@ def create_resturent(request):
 def create_resturent_menu(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
-        resturent = data['resturent']
+        resturent_user = data['resturent_userId']
+        resturent = data['resturentId']
         name = data['name']
         food_image = data['food_image']
         description = data['description']
@@ -43,12 +43,19 @@ def create_resturent_menu(request):
         is_active = data['is_active']
         stock = int(data['stock'])
 
+        resturent_user_obj = ResturentOwner.objects.filter(id=resturent_user).first()
+        if resturent_user_obj is None:
+            return JsonResponse({'status': 'failed', 'message': 'invalid user'})
+
         resturent = Resturent.objects.filter(id=resturent).first()
 
         if resturent is None:
             return JsonResponse({'status': 'failed', 'message': 'invalid resturent'})
         
-        resturent_menu = ResturentMenu.objects.create(resturent=resturent, name=name, food_image=food_image, description=description, price=price, is_active=is_active, stock=stock)
+        if resturent_user_obj != resturent.resturent_owner:
+            return JsonResponse({'status': 'failed', 'message': 'invalid resturent user'})
+        
+        resturent_menu = ResturentFoodItem.objects.create(resturent=resturent, name=name, food_image=food_image, description=description, price=price, is_active=is_active, stock=stock)
         resturent_menu.save()
 
         return JsonResponse({'status': 'success', 'message': 'resturent menu created successfully', "data" : {
@@ -64,14 +71,23 @@ def create_resturent_menu(request):
 def create_resturent_table(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
+        resturent_user = data['resturent_userId']
         resturent = data['resturent']
         table_number = int(data['table_number'])
         is_available = data['is_available']
+
+        resturent_user_obj = ResturentOwner.objects.filter(id=resturent_user).first()
+
+        if resturent_user_obj is None:
+            return JsonResponse({'status': 'failed', 'message': 'invalid user'})
 
         resturent = Resturent.objects.filter(id=resturent).first()
 
         if resturent is None:
             return JsonResponse({'status': 'failed', 'message': 'invalid resturent'})
+
+        if resturent_user_obj != resturent.resturent_owner:
+            return JsonResponse({'status': 'failed', 'message': 'invalid resturent user'})
         
         resturent_table = ResturentTables.objects.create(resturent=resturent, table_number=table_number, is_available=is_available)
         resturent_table.save()
@@ -104,7 +120,7 @@ def create_customer_purchase(request):
         customer_purchase.save()
 
         for item in purchased_items:
-            resturent_menu = ResturentMenu.objects.filter(id=item).first()
+            resturent_menu = ResturentFoodItem.objects.filter(id=item).first()
             if resturent_menu is None:
                 return JsonResponse({'status': 'failed', 'message': 'invalid resturent menu'})
             customer_purchase.purchased_items.add(resturent_menu)
@@ -123,14 +139,17 @@ def get_resturent(request):
     if request.method == 'GET':
         resturent = Resturent.objects.all()
         if resturent is None:
-            return JsonResponse({'status': 'failed', 'message': 'invalid resturent'})
-        return JsonResponse({'status': 'success', 'message': 'resturent fetched successfully', "data" : {
-            "id": resturent.id,
-            "name": resturent.name,
-            "address": resturent.address,
-            "table": resturent.table,
-            "is_active": resturent.is_active,
-        }})
+            return JsonResponse({'status': 'failed', 'message': 'No resturents found'})
+        data = []
+        for item in resturent:
+            data.append({
+                "id": item.id,
+                "name": item.name,
+                "address": item.address,
+                "table": item.table,
+                "is_active": item.is_active,
+            })
+        return JsonResponse({'status': 'success', 'message': 'resturent fetched successfully', "data" : data})
 
 def get_resturent_menu(request):
     if request.method == 'POST':
@@ -142,7 +161,7 @@ def get_resturent_menu(request):
         if resturent is None:
             return JsonResponse({'status': 'failed', 'message': 'invalid resturent'})
         
-        resturent_menu = ResturentMenu.objects.filter(resturent=resturent)
+        resturent_menu = ResturentFoodItem.objects.filter(resturent=resturent)
         if resturent_menu is None:
             return JsonResponse({'status': 'failed', 'message': 'invalid resturent menu'})
         return JsonResponse({'status': 'success', 'message': 'resturent menu fetched successfully', "data" : {

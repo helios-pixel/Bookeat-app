@@ -1,3 +1,5 @@
+#!/bin/bash
+
 server_address="tanishq@64.227.160.102"
 password="MyPass@12345"
 

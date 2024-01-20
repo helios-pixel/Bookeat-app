@@ -18,7 +18,7 @@ jobs:
           server_address="tanishq@64.227.160.102"
           password="MyPass@12345"
           
-          sshpass -e ssh -tt "$server_address" <<EOF
+          sshpass ssh -tt "$server_address" <<EOF
               cd ./restrauntify
               git pull origin main
               cd ./server_main/

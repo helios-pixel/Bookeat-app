@@ -1,4 +1,7 @@
-sshpass -p "MyPass@12345" ssh "tanishq@64.227.160.102" <<EOF 
+server_address="tanishq@64.277.160.102"
+password="MyPass@12345"
+
+sshpass -p "$password" ssh "$server_address" <<EOF 
     cd ./restrauntify 
     git pull origin main 
     cd ./server_main/ 
@@ -6,5 +9,5 @@ sshpass -p "MyPass@12345" ssh "tanishq@64.227.160.102" <<EOF
     pip3 install -r requirements.txt
     python3 manage.py makemigrations
     python3 manage.py migrate
-    echo "MyPass@12345" | sudo -S systemctl restart gunicorn
+    echo "$password" | sudo -S systemctl restart gunicorn
 EOF

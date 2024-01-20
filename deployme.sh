@@ -5,7 +5,7 @@ sshpass -p "$password" ssh -t "$server_address" <<EOF
     cd ./restrauntify 
     git pull origin main 
     cd ./server_main/ 
-    source ./env/bin/activate 
+    . /home/tanishq/restrauntify/server_main/env/bin/activate 
     pip3 install -r requirements.txt
     python3 manage.py makemigrations
     python3 manage.py migrate

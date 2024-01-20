@@ -1,4 +1,4 @@
-server_address="tanishq@64.277.160.102"
+server_address="tanishq@64.227.160.102"
 password="MyPass@12345"
 
 sshpass -p "$password" ssh "$server_address" <<EOF 

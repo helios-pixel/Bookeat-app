@@ -6,5 +6,5 @@ sshpass -p "MyPass@12345" ssh "tanishq@64.227.160.102" <<EOF
     pip3 install -r requirements.txt
     python3 manage.py makemigrations
     python3 manage.py migrate
-    sudo systemctl restart gunicorn
+    echo "MyPass@12345" | sudo -S systemctl restart gunicorn
 EOF

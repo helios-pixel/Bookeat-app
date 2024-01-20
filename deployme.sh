@@ -1,7 +1,7 @@
 server_address="tanishq@64.227.160.102"
 password="MyPass@12345"
 
-sshpass -p "$password" ssh "$server_address" <<EOF 
+sshpass -p "$password" ssh -t "$server_address" <<EOF 
     cd ./restrauntify 
     git pull origin main 
     cd ./server_main/ 

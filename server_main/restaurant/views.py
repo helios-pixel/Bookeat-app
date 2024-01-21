@@ -2,10 +2,12 @@ from django.http import JsonResponse
 import json
 from .models import *
 from authApp.models import *
+# import csrf_exmepy
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
-
+@csrf_exempt
 def create_resturent(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
@@ -30,7 +32,7 @@ def create_resturent(request):
             "is_active": resturent.is_active,
         }})
 
-
+@csrf_exempt
 def create_resturent_menu(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
@@ -68,6 +70,7 @@ def create_resturent_menu(request):
             "stock": resturent_menu.stock,
         }})
 
+@csrf_exempt
 def create_resturent_table(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
@@ -98,6 +101,7 @@ def create_resturent_table(request):
             "is_available": resturent_table.is_available,
         }})
 
+@csrf_exempt
 def create_customer_purchase(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
@@ -132,6 +136,7 @@ def create_customer_purchase(request):
             "is_cancelled": customer_purchase.is_cancelled,
         }})
 
+@csrf_exempt
 def create_customer_table_booking(request):
     pass
 
@@ -151,6 +156,7 @@ def get_resturent(request):
             })
         return JsonResponse({'status': 'success', 'message': 'resturent fetched successfully', "data" : data})
 
+@csrf_exempt
 def get_resturent_menu(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
@@ -174,6 +180,7 @@ def get_resturent_menu(request):
             "stock": resturent_menu.stock,
         }})
 
+@csrf_exempt
 def get_resturent_table(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
@@ -193,6 +200,7 @@ def get_resturent_table(request):
             "is_available": resturent_table.is_available,
         }})
 
+@csrf_exempt
 def get_customer_purchase(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
@@ -213,5 +221,6 @@ def get_customer_purchase(request):
             "is_cancelled": customer_purchase.is_cancelled,
         }})
 
+@csrf_exempt
 def get_customer_table_booking(request):
     pass

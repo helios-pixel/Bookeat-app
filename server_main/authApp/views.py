@@ -5,8 +5,10 @@ from django.http import JsonResponse
 import re
 from base.helpers import *
 import json
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
+@csrf_exempt
 def create_customer(request):
     if request.method == 'POST':
         """
@@ -16,7 +18,7 @@ def create_customer(request):
         first_name, last_name = data.get('name').split(' ')
         phone = data.get('phone')
         password = data.get('password')
-        address = data.get('address')
+        address = ''
         confirm_password = data.get('confirm_password')
         
         if password != confirm_password:
@@ -50,6 +52,7 @@ def create_customer(request):
         }})
     return JsonResponse({'status': 'error', 'message': 'Invalid Request'})
 
+@csrf_exempt
 def create_resturent_owner(request):
     if request.method == "POST":
         """
@@ -93,7 +96,7 @@ def create_resturent_owner(request):
         }})
     return JsonResponse({'status': 'error', 'message': 'Invalid Request'})
     
-
+@csrf_exempt
 def customerLogin(request):
     if request.method == "POST":
         """
@@ -128,6 +131,7 @@ def customerLogin(request):
         }})
     return JsonResponse({'status': 'error', 'message': 'Invalid Request'})
     
+@csrf_exempt
 def restaurantOwnerLogin(request):
     if request.method == "POST":
         """

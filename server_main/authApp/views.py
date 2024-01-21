@@ -10,47 +10,50 @@ from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def create_customer(request):
-    if request.method == 'POST':
-        """
-        taking all the required data from the request
-        """
-        data = json.loads(request.body.decode('utf-8'))
-        first_name, last_name = data.get('name').split(' ')
-        phone = data.get('phone')
-        password = data.get('password')
-        address = ''
-        confirm_password = data.get('confirm_password')
-        
-        if password != confirm_password:
-            return JsonResponse({'status': 'failed', 'message': 'password and confirm password does not match'})
-        """
-        validate the phone number
-        """
-        is_valid_phone = is_valid_phone(phone)
-        if not is_valid_phone:
-            return JsonResponse({'status': 'failed', 'message': 'invalid phone number'})
-        """
-        create the user and customer
-        """
-        user = User.objects.create(username=phone, first_name=first_name, last_name=last_name)
-        user.set_password(password)
-        otp = create_otp()
-        user.save()
-        customer = Customer.objects.create(profile=user, phone_number=phone, address=address, otp=otp)
-        customer.save()
-        #send_otp(phone, otp)
-        """
-        sending a final response
-        """
-        return JsonResponse({'status': 'success', 'message': 'customer created successfully', "data" : {
-            "id": customer.id,
-            "username": customer.profile.username,
-            "email": customer.profile.email,
-            "phone": customer.phone_number,
-            "address": customer.address,
-            "otp": customer.otp,
-        }})
-    return JsonResponse({'status': 'error', 'message': 'Invalid Request'})
+    try:
+        if request.method == 'POST':
+            """
+            taking all the required data from the request
+            """
+            data = json.loads(request.body.decode('utf-8'))
+            first_name, last_name = data.get('name').split(' ')
+            phone = data.get('phone')
+            password = data.get('password')
+            address = ''
+            confirm_password = data.get('confirm_password')
+            
+            if password != confirm_password:
+                return JsonResponse({'status': 'failed', 'message': 'password and confirm password does not match'})
+            """
+            validate the phone number
+            """
+            is_valid_phone = is_valid_phone(phone)
+            if not is_valid_phone:
+                return JsonResponse({'status': 'failed', 'message': 'invalid phone number'})
+            """
+            create the user and customer
+            """
+            user = User.objects.create(username=phone, first_name=first_name, last_name=last_name)
+            user.set_password(password)
+            otp = create_otp()
+            user.save()
+            customer = Customer.objects.create(profile=user, phone_number=phone, address=address, otp=otp)
+            customer.save()
+            #send_otp(phone, otp)
+            """
+            sending a final response
+            """
+            return JsonResponse({'status': 'success', 'message': 'customer created successfully', "data" : {
+                "id": customer.id,
+                "username": customer.profile.username,
+                "email": customer.profile.email,
+                "phone": customer.phone_number,
+                "address": customer.address,
+                "otp": customer.otp,
+            }})
+        return JsonResponse({'status': 'error', 'message': 'Invalid Request'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': e})
 
 @csrf_exempt
 def create_resturent_owner(request):

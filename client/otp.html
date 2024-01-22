@@ -6,7 +6,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-	<title>Epicurean - Food & Restaurant Html Template</title>
+	<title>OTP verification</title>
 	
 	<link rel="icon" href="assets/images/fav.png" type="image/gif" sizes="20x20">
 
@@ -103,34 +103,24 @@
             <h2>BookEat</h2>
         </div>
         <div class="inner-container">
+            <!-- notification alerts -->
             <div class="alert alert-danger d-none" role="alert" id="alert">
                 <strong id="msg-al">Oh snap!</strong> <span id="alert-message"></span>
             </div>
-            <form onsubmit="login(event)" method="post" class="form-cont">
-                <!-- email -->
-                <label for="email">Phone Number*</label>
+            <form onsubmit="verifyOTP(event)" method="post" class="form-cont">
+                <!-- full name -->
+                <label for="full-name">Enter OTP*</label>
                 <div class="input-cont">
-                    <i class="bx bx-phone"></i><input type="number" id="phoneNumber" placeholder="Phone Number">
+                    <i class="bx bx-lock"></i><input type="text" placeholder="123456" id="otp">
                 </div>
-                <!-- password -->
-                <label for="password">Password*</label>
-                <div class="input-cont">
-                    <i class="bx bx-lock"></i><input type="password" id="password" placeholder="Password">
-                </div>
-                <a href="#" class="mb-2">Forgot Password?</a>
-                <label for="userType">User Type*</label>
-                <select name="userType" id="userType" class="input-cont">
-                    <option value="diner">Diner</option>
-                    <option value="restaurant">Restaurant Owner</option>
-                </select>
                 <!-- submit -->
-                <input id="submit" type="submit" value="Sign In">
+                <input id="submit" type="submit" value="verify">
                 <!-- forgot password -->
                 <!-- sign up -->
-                <p class="text-center mt-3">Don't have an account? <a href="../client/register.html">Sign Up</a></p>
             </form>
         </div>
     </div>
 
-
-    <script src="assets/helper/clientAuth.js"></script>
+    <script src="./assets/helper/otp.js"></script>
+    </body>
+</html>

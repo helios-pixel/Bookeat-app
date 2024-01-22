@@ -103,26 +103,45 @@
             <h2>BookEat</h2>
         </div>
         <div class="inner-container">
-            <form action="" method="post" class="form-cont">
+            <!-- notification alerts -->
+            <div class="alert alert-danger d-none" role="alert" id="alert">
+                <strong id="msg-al">Oh snap!</strong> <span id="alert-message"></span>
+            </div>
+            <form onsubmit="signup(event)" method="post" class="form-cont">
+                <!-- full name -->
+                <label for="full-name">Full Name*</label>
+                <div class="input-cont">
+                    <i class="bx bx-user"></i><input type="text" placeholder="Full Name" id="fullName">
+                </div>
                 <!-- email -->
                 <label for="email">Phone Number*</label>
                 <div class="input-cont">
-                    <i class="bx bx-phone"></i><input type="email" placeholder="Phone Number">
+                    <i class="bx bx-phone"></i><input type="number" placeholder="Phone Number" id="phoneNumber">
                 </div>
                 <!-- password -->
                 <label for="password">Password*</label>
                 <div class="input-cont">
-                    <i class="bx bx-lock"></i><input type="password" placeholder="Password">
+                    <i class="bx bx-lock"></i><input type="password" placeholder="Password" id="password">
                 </div>
                 <label for="password">Confirm Password*</label>
                 <div class="input-cont">
-                    <i class="bx bx-lock"></i><input type="password" placeholder="Confirm Password">
+                    <i class="bx bx-lock"></i><input type="password" placeholder="Confirm Password" id="confirmPassword">
                 </div>
+                <!-- a dropdown for diner or restaurant owner -->
+                <label for="userType">User Type*</label>
+                <select name="userType" id="userType" class="input-cont">
+                    <option value="diner">Diner</option>
+                    <option value="restaurant">Restaurant Owner</option>
+                </select>
                 <!-- submit -->
-                <input type="submit" value="Sign Up">
+                <input id="submit" type="submit" value="Sign Up">
                 <!-- forgot password -->
                 <!-- sign up -->
                 <p class="text-center mt-3">Already have an account? <a href="../client/siginin.html">Sign In</a></p>
             </form>
         </div>
     </div>
+
+    <script src="./assets/helper/clientAuth.js"></script>
+    </body>
+</html>

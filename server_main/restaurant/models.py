@@ -9,6 +9,7 @@ class Resturent(BaseModel):
     name = models.CharField(max_length=100)
     address = models.TextField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
+    resturent_image = models.ImageField(upload_to='resturent_images/', blank=True, null=True)
 
     def __str__(self):
         return self.name + " " + self.resturent_owner.profile.first_name + " " + self.resturent_owner.profile.last_name + " " + self.resturent_owner.phone_number

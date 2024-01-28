@@ -11,24 +11,25 @@ from django.views.decorators.csrf import csrf_exempt
 def create_resturent(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
-        restaurantOwner = data['restaurantOwnerId']
+        restaurantOwner = data['id']
         name = data['name']
         address = data['address']
         is_active = data['is_active']
+        restaurant_image = data['restaurant_image']
+        print(restaurantOwner, name, address, is_active, restaurant_image)
 
         restaurant_owner = ResturentOwner.objects.filter(id=restaurantOwner).first()
 
         if restaurant_owner is None:
             return JsonResponse({'status': 'failed', 'message': 'invalid restaurant owner'})
         
-        resturent = Resturent.objects.create(resturent_owner=restaurant_owner, name=name, address=address, is_active=is_active)
+        resturent = Resturent.objects.create(resturent_owner=restaurant_owner, name=name, address=address, is_active=is_active, resturent_image=restaurant_image);
         resturent.save()
 
         return JsonResponse({'status': 'success', 'message': 'resturent created successfully', "data" : {
             "id": resturent.id,
             "name": resturent.name,
             "address": resturent.address,
-            "table": resturent.table,
             "is_active": resturent.is_active,
         }})
 
@@ -224,3 +225,30 @@ def get_customer_purchase(request):
 @csrf_exempt
 def get_customer_table_booking(request):
     pass
+
+
+@csrf_exempt
+def get_your_restaurant(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        resturent_owner = data['id']
+
+        resturent_owner = ResturentOwner.objects.filter(id=resturent_owner).first()
+
+        if resturent_owner is None:
+            return JsonResponse({'status': 'failed', 'message': 'invalid resturent owner'})
+        
+        resturent = Resturent.objects.filter(resturent_owner=resturent_owner).all()
+        list_resturent = []
+        for item in resturent:
+            print(item.resturent_image)
+            list_resturent.append({
+                "id": item.id,
+                "name": item.name,
+                "address": item.address,
+                "is_active": item.is_active,
+                "resturent_image": item.resturent_image,
+            })
+        if resturent is None:
+            return JsonResponse({'status': 'failed', 'message': 'invalid resturent'})
+        return JsonResponse({'status': 'success', 'message': 'resturent fetched successfully', "data" : list_resturent})

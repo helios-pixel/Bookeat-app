@@ -50,11 +50,13 @@ def create_customer(request):
             """
             return JsonResponse({'status': 'success', 'message': 'customer created successfully', "data" : {
                 "id": customer.id,
+                "name" : customer.profile.first_name + " " + customer.profile.last_name,
                 "username": customer.profile.username,
                 "email": customer.profile.email,
                 "phone": customer.phone_number,
                 "address": customer.address,
                 "otp": customer.otp,
+                "role": "customer"
             }})
         return JsonResponse({'status': 'error', 'message': 'Invalid Request'})
     except Exception as e:
@@ -76,7 +78,7 @@ def create_resturent_owner(request):
         validate the email and phone number
         """
         
-        is_valid_phone = is_valid_phone(phone)
+        is_valid_phone = isValidPhone(phone)
         if not is_valid_phone:
             return JsonResponse({'status': 'failed', 'message': 'invalid phone number'})
         
@@ -92,16 +94,20 @@ def create_resturent_owner(request):
         user.save()
         resturent_owner = ResturentOwner.objects.create(profile=user, phone_number=phone, otp=otp)
         resturent_owner.save()
+        print(resturent_owner)
+        print(resturent_owner.otp)
         # send_otp(phone, otp)
         """
         sending a final response
         """
         return JsonResponse({'status': 'success', 'message': 'resturent owner created successfully', "data" : {
             "id": resturent_owner.id,
+            "name" : resturent_owner.profile.first_name + " " + resturent_owner.profile.last_name,
             "username": resturent_owner.profile.username,
             "email": resturent_owner.profile.email,
             "phone": resturent_owner.phone_number,
             "otp": resturent_owner.otp,
+            "role": "resturent_owner"
         }})
     return JsonResponse({'status': 'error', 'message': 'Invalid Request'})
     
@@ -138,9 +144,11 @@ def customerLogin(request):
         """
         return JsonResponse({'status': 'success', 'message': 'customer logged in successfully', "data" : {
             "id": customer.id,
+            "name" : customer.profile.first_name + " " + customer.profile.last_name,
             "username": customer.profile.username,
             "phone": customer.phone_number,
-            "address": customer.address
+            "address": customer.address,
+            "role": "customer"
         }})
     return JsonResponse({'status': 'error', 'message': 'Invalid Request'})
     
@@ -156,11 +164,9 @@ def restaurantOwnerLogin(request):
         """
         validate phone number
         """
-        is_valid_phone = is_valid_phone(phone)
+        is_valid_phone = isValidPhone(phone)
         if not is_valid_phone:
             return JsonResponse({'status': 'failed', 'message': 'invalid phone number'})
-        if(user.check_password(password)):
-            return JsonResponse({'status': 'failed', 'message': 'Password Incorrect'})
         
         """
         create the user and resturent owner
@@ -169,6 +175,9 @@ def restaurantOwnerLogin(request):
             user = User.objects.filter(username=phone).first()
             if not user:
                 return JsonResponse({'status': 'failed', 'message': 'User does not exist'})
+            
+            if(not user.check_password(password)):
+                return JsonResponse({'status': 'failed', 'message': 'Password Incorrect'})
             restaurantOwner = ResturentOwner.objects.filter(profile=user).first()
             if not restaurantOwner:
                 return JsonResponse({'status': 'failed', 'message': 'invalid credentials'})
@@ -177,8 +186,10 @@ def restaurantOwnerLogin(request):
         """
         return JsonResponse({'status': 'success', 'message': 'resturent owner logged in successfully', "data" : {
             "id": restaurantOwner.id,
+            "name" : restaurantOwner.profile.first_name + " " + restaurantOwner.profile.last_name,
             "username": restaurantOwner.profile.username,
             "phone": restaurantOwner.phone_number,
+            "role": "resturent_owner"
         }})
     return JsonResponse({'status': 'error', 'message': 'Invalid Request'})
 
@@ -210,18 +221,32 @@ def verify_otp(request):
             if not user:
                 return JsonResponse({'status': 'failed', 'message': 'User does not exist'})
             customer = Customer.objects.filter(profile=user).first()
-            if not customer:
+            if customer:
+                if otp != customer.otp:
+                    return JsonResponse({'status': 'failed', 'message': 'invalid otp'})
+                customer.is_otp_verified = True
+                customer.otp = ""
+                customer.save()
+                return JsonResponse({'status': 'success', 'message': 'otp verified successfully', "data" : {
+                    "id": customer.id,
+                    "phone": customer.phone_number,
+                }})
+            restaurantOwner  = ResturentOwner.objects.filter(profile=user).first()
+            if restaurantOwner:
+                if otp != restaurantOwner.otp:
+                    return JsonResponse({'status': 'failed', 'message': 'invalid otp'})
+                restaurantOwner.is_otp_verified = True
+                restaurantOwner.otp = ""
+                restaurantOwner.save()
+
+                return JsonResponse({'status': 'success', 'message': 'otp verified successfully', "data" : {
+                    "id": restaurantOwner.id,
+                    "phone": restaurantOwner.phone_number,
+                }})
+
+            if not customer and not restaurantOwner:
                 return JsonResponse({'status': 'failed', 'message': 'invalid credentials'})
-            if otp != customer.otp:
-                return JsonResponse({'status': 'failed', 'message': 'invalid otp'})
-            customer.is_otp_verified = True
-            customer.otp = ""
-            customer.save()
-        """
-        sending a final response
-        """
-        return JsonResponse({'status': 'success', 'message': 'otp verified successfully', "data" : {
-            "id": customer.id,
-            "phone": customer.phone_number,
-        }})
+            
+        return JsonResponse({'status': 'error', 'message': 'Invalid Request'})
+        
     return JsonResponse({'status': 'error', 'message': 'Invalid Request'})

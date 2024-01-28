@@ -13,4 +13,5 @@ urlpatterns = [
     path('get_resturent_table/', views.get_resturent_table, name='get_resturent_table'),
     path('get_customer_purchase/', views.get_customer_purchase, name='get_customer_purchase'),
     path('get_customer_table_booking/', views.get_customer_table_booking, name='get_customer_table_booking'),
+    path('get_your_resturent/', views.get_your_restaurant, name='get_your_resturent'),
 ]

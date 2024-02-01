@@ -44,8 +44,13 @@ def create_customer(request):
             user.save()
             customer = Customer.objects.create(profile=user, phone_number=phone, address=address, otp=otp)
             customer.save()
-            # otp_response = send_otp(phone, otp)
-            # if 
+            otp_response = send_otp(phone, otp)
+            print(otp_response)
+            # response is like this - <JsonResponse status_code=200, "application/json">
+            if otp_response.status_code != 200:
+                user.delete()
+                customer.delete()
+                return JsonResponse({'status': 'failed', 'message': 'otp not sent'})
             """
             sending a final response
             """
@@ -56,7 +61,6 @@ def create_customer(request):
                 "email": customer.profile.email,
                 "phone": customer.phone_number,
                 "address": customer.address,
-                "otp": customer.otp,
                 "role": "customer"
             }})
         return JsonResponse({'status': 'error', 'message': 'Invalid Request'})

@@ -90,13 +90,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres', 
-        'USER': 'postgres', 
+        'USER': 'postgres.nhweoahhixxinaxlmdwm', 
         'PASSWORD': 'sQpQvlUuOvMSKrOO',
-        'HOST': 'db.nhweoahhixxinaxlmdwm.supabase.co', 
+        'HOST': 'aws-0-ap-south-1.pooler.supabase.com', 
         'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -143,3 +142,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 KEY_ID = "rzp_test_cuITzpvHjXU3KD"
 KEY_SECRET = "cTALsEUpER69Ulwat7DiycIg"
+ACCOUNT_SID = "AC299000e5ce0ddc31c2f07e187aedeabf"
+AUTH_TOKEN = "3327ca94b8c3fbeb247e58a401c3d934"

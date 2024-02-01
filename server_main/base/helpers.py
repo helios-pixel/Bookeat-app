@@ -18,11 +18,11 @@ def send_otp(phone, otp):
 
     try:
         message = client.messages.create(
-            from_='+12313594239',
+            from_='+16592180776',
             body=f'Your otp is {otp}',
             to=f'+91{phone}'
         )
-        return JsonResponse({'status': "success broooo", 'message': message.sid})
+        return JsonResponse({'status': "success", 'message': message.sid})
     except Exception as e:
         print("here",e)
-        return JsonResponse({'status': message.error_code, 'message': str(message.error_message)})
+        return JsonResponse({'status': 400, 'message': "otp not sent"})

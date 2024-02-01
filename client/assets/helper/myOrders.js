@@ -1,0 +1,81 @@
+function loadTable(data, data2){
+    const elem = document.getElementById('table-booking')
+    const table = elem.querySelector('tbody')
+    let sno = 1
+    table.innerHTML = ''
+    data.forEach((item)=>{
+        const tr = document.createElement('tr')
+        tr.innerHTML = `
+            <td>${sno}</td>
+            <td>${item.user_name}</td>
+            <td>${item.restaurant_name}</td>
+            <td>${item.order_id}</td>
+            <td class="text-success">₹${item.amount_paid}</td>
+            <td>${item.no_of_diners}</td>
+            <td>${item.tables} => ${item.your_booked_table_numbers.map((table)=>table)}</td>
+        `
+        table.appendChild(tr)
+        sno++
+    })
+
+    const elem2 = document.getElementById('order-pickup')
+    const table2 = elem2.querySelector('tbody')
+    let sno2 = 1
+    table2.innerHTML = ''
+    data2.forEach((item)=>{
+        const tr = document.createElement('tr')
+        tr.innerHTML = `
+            <td>${sno2}</td>
+            <td>${item.user_name}</td>
+            <td>${item.restaurant_name}</td>
+            <td>${item.order_id}</td>
+            <td class="text-success">₹${item.amount_paid}</td>
+            <td>
+                <ul>
+                    ${item.menu_items.map((items)=>{return `<li>${items}</li>`})}
+                </ul>
+            </td>
+        `
+        table2.appendChild(tr)
+        sno2++
+    })
+}
+
+const loadCustomerOrders = async ()=>{
+    const token = JSON.parse(localStorage.getItem('tokenAuth'))
+    const response = await fetch(`http://localhost:8000/restaurant/get_customer_table_booking/`,{
+        method: 'POST',
+        body: JSON.stringify({
+            customer: token.id
+        })
+    })
+    const data = await response.json()
+    console.log(data)
+    const response2 = await fetch(`http://localhost:8000/restaurant/get_customer_purchase/`,{
+        method: 'POST',
+        body: JSON.stringify({
+            customer: token.id
+        })
+    })
+    const data2 = await response2.json()
+    console.log(data2)
+    if(data.status === 'success' || data2.status === 'success'){
+        console.log(data.data)
+        loadTable(data.data, data2.data)
+    }
+}
+
+function loadMyOrders(){
+    const token = JSON.parse(localStorage.getItem('tokenAuth'))
+    if(token === null){
+        window.location.pathname = "/client/siginin.html"
+    }
+    if(token === null){
+        window.location.pathname = "/client/siginin.html"
+    }
+    if(token !== null && token.role === 'customer'){
+        loadCustomerOrders()
+    }
+}
+
+loadMyOrders();

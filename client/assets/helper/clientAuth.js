@@ -1,6 +1,3 @@
-
-
-
 const signup = (e) => {
     e.preventDefault();
     const submitBtn = document.getElementById('submit');
@@ -40,7 +37,7 @@ const signup = (e) => {
     // send the data to the server
     if (userType === 'diner') {
 
-    fetch('https://176b-2401-4900-5f75-f100-b4cc-cbb2-6ca-86f1.ngrok-free.app/create_customer/',
+    fetch('http://localhost:8000/create_customer/',
         {
             method: 'POST',
             headers: {
@@ -80,30 +77,43 @@ const signup = (e) => {
     
     
     } else{
-            fetch('https://176b-2401-4900-5f75-f100-b4cc-cbb2-6ca-86f1.ngrok-free.app/create_resturent_owner/'
-            ,{
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    fullName: fullName,
-                    phoneNumber: phoneNumber,
-                    password: password
-                })
+        fetch('http://localhost:8000/create_resturent_owner/',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: fullName,
+                phone: phoneNumber,
+                password: password,
+                confirm_password: confirmPassword
             })
-            .then(res => res.json())
-            .then(data => {
-                if (data.error) {
-                    alert(data.error);
-                } else {
-                    alert('Account created successfully');
-                    window.location.pathname = '';
-    
-    
-                }
+        }).then(res => res.json()).then(data => {
+            console.log(data);
+            if (data.status !== "success") {
+                const alertMessage = document.getElementById('alert-message');
+                alertMessage.innerHTML = data.message;
+                const alert = document.getElementById('alert');
+                alert.classList.remove('d-none');
+                submitBtn.disabled = false;
+                return;
+            } else {
+                const alertMessage = document.getElementById('alert-message');
+                alertMessage.innerHTML = 'Account created successfully';
+                const msg = document.getElementById('msg-al');
+                msg.innerHTML = 'success';
+                const alert = document.getElementById('alert');
+                alert.classList.replace('alert-danger', 'alert-success');
+                alert.classList.remove('d-none');
+                localStorage.setItem('tokenAuth' , JSON.stringify(data.data));
+
+                setTimeout(() => {
+                    window.location.pathname = '/client/otp.html';
+                }, 3000);
             }
-            )
+        }
+        )
         }
     }
 
@@ -128,7 +138,7 @@ const login = (e) => {
     // send the data to the server
 
     if (userType === 'diner') {
-        fetch('https://176b-2401-4900-5f75-f100-b4cc-cbb2-6ca-86f1.ngrok-free.app/customer_login/',
+        fetch('http://localhost:8000/customer_login/',
 
             {
                 method: 'POST',
@@ -165,7 +175,7 @@ const login = (e) => {
             )
     }
     else{
-        fetch('https://176b-2401-4900-5f75-f100-b4cc-cbb2-6ca-86f1.ngrok-free.app/resturent_owner_login/',
+        fetch('http://localhost:8000/resturent_owner_login/',
         {
             method: 'POST',
             headers: {
@@ -200,5 +210,22 @@ const login = (e) => {
         }
         )
     }
+}
 
+const logout = () => {
+    const logoutElement = document.querySelector(".logout-screen")
+    logoutElement.classList.remove("d-none")
+    const cancelBtn = logoutElement.querySelector(".btn")
+    const logoutBtn = logoutElement.querySelector(".common-btn")
+    cancelBtn.addEventListener("click", () => {
+        logoutElement.classList.add("d-none")
+    })
+    logoutBtn.addEventListener("click", () => {
+        // fake timer
+        setTimeout(() => {
+            localStorage.removeItem('tokenAuth')
+            window.location.pathname = "/client/siginin.html"
+        }, 1000)
+        logoutBtn.innerHTML = "Logging out..."
+    })
 }

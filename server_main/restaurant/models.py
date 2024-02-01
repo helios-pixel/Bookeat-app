@@ -31,34 +31,46 @@ class ResturentTables(BaseModel):
     resturent = models.ForeignKey(Resturent, on_delete=models.CASCADE)
     table_number = models.IntegerField(default=0)
     is_available = models.BooleanField(default=True)
+    booked_by = models.ForeignKey(Customer, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
-        return str(self.table_number)
+        return str(self.table_number) + "th table of " + self.resturent.name + " - Booked" if not self.is_available else str(self.table_number) + "th table of " + self.resturent.name + " - Available"
     
     def __save__(self, *args, **kwargs):
         table_number = ResturentTables.objects.filter(resturent=self.resturent).count() + 1
         self.table_number = table_number
         super(ResturentTables, self).save(*args, **kwargs)
-
-
-class CustomerPurchase(BaseModel):
-    resturent = models.ForeignKey(Resturent, on_delete=models.CASCADE)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    is_paid = models.BooleanField(default=False)
-    is_cancelled = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.customer.profile.email
     
 class CustomerOrderItem(BaseModel):
+    resturent = models.ForeignKey(Resturent, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    amount_paid = models.FloatField(default=0)
+    is_paid = models.BooleanField(default=False)
+    order_id = models.CharField(max_length=100, blank=True, null=True)
+    payment_id = models.CharField(max_length=100, blank=True, null=True)
+    payment_signature = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return self.customer.profile.first_name + " " + self.customer.profile.last_name + " " + self.resturent.name
+    
+class CustomerOrderItemDetails(BaseModel):
+    order_item = models.ForeignKey(CustomerOrderItem, on_delete=models.CASCADE)
     food_item = models.ForeignKey(ResturentFoodItem, on_delete=models.CASCADE)
-    customer_purchase = models.ForeignKey(CustomerPurchase, on_delete=models.CASCADE)
-    quantity = models.IntegerField(default=0)
+    price = models.FloatField(default=0)
+
+    def __str__(self):
+        return self.order_item.customer.profile.first_name + " " + self.order_item.customer.profile.last_name + " " + self.food_item.name
     
 class CustomerTableBooking(BaseModel):
     resturent = models.ForeignKey(Resturent, on_delete=models.CASCADE)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    table = models.ForeignKey(ResturentTables, on_delete=models.CASCADE)
+    order_id = models.CharField(max_length=100, blank=True, null=True)
+    payment_id = models.CharField(max_length=100, blank=True, null=True)
+    payment_signature = models.CharField(max_length=100, blank=True, null=True)
+    amount_paid = models.FloatField(default=0)
+    no_of_diners = models.IntegerField(default=0)
+    is_paid = models.BooleanField(default=False)
+    tables = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.customer.profile.first_name + " " + self.customer.profile.last_name + " " + self.table.table_number
+        return self.customer.profile.first_name + " " + self.customer.profile.last_name

@@ -31,7 +31,7 @@ const verifyOTP = (e) => {
         return
     }
 
-    fetch('https://176b-2401-4900-5f75-f100-b4cc-cbb2-6ca-86f1.ngrok-free.app/customer_otp_verify/',
+    fetch('http://localhost:8000/customer_otp_verify/',
 
         {
             method: 'POST',
@@ -57,10 +57,5 @@ const verifyOTP = (e) => {
         }).catch(err => {
             console.log(err)
         }
-    
-    
     )
-    
-
-
 }

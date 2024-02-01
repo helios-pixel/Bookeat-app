@@ -4017,6 +4017,75 @@ body::-webkit-scrollbar-thumb {
   content: "\f2ea";
 }
 
+.logout-screen{
+    width: 100vw;
+    height: 100vh;
+    background-color: #0000008f;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.inner-screen{
+  background: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 10px;
+}
+
+.btns{
+  width: -webkit-fill-available;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.btns button{
+  border: none;
+  outline: none;
+}
+
+.hamburgerMenusList{
+  position: fixed;
+  top: 5rem;
+  right: 15rem;
+  z-index: 11;
+  background: white;
+  border-radius: 7px;
+}
+
+.hamburgerMenusList ul{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.hamburgerMenusList ul li:first-child{
+  border-top: none;
+}
+
+.hamburgerMenusList ul li{
+  padding: 0.5rem 2rem;
+  text-align: center;
+  border-top: 1px solid gray;
+  cursor: pointer;
+}
+
+.hamburgerMenusList ul li:hover{
+  background-color: #e6e6e6;
+}
+
+.click_here{
+  box-shadow: 0px 0px 9px 4px #fd990080 !important; 
+  transition: all 0.3s ease-in-out;
+}
+
 /*================================================
 16. Menu CSS
 =================================================*/

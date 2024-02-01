@@ -44,7 +44,8 @@ def create_customer(request):
             user.save()
             customer = Customer.objects.create(profile=user, phone_number=phone, address=address, otp=otp)
             customer.save()
-            #send_otp(phone, otp)
+            # otp_response = send_otp(phone, otp)
+            # if 
             """
             sending a final response
             """
@@ -250,3 +251,82 @@ def verify_otp(request):
         return JsonResponse({'status': 'error', 'message': 'Invalid Request'})
         
     return JsonResponse({'status': 'error', 'message': 'Invalid Request'})
+
+
+@csrf_exempt
+def update_customer(request):
+    if request.method == "POST":
+        """
+        taking all the required data from the request
+        """
+        print(request.body, "here")
+        data = json.loads(request.body.decode('utf-8'))
+        print(data)
+        phone = data.get('phone')
+        address = data.get('address')
+        email = data.get('email')
+        fName = data.get('fName')
+        lName = data.get('lName')
+        role = data.get('role')
+        
+        """
+        validate phone number
+        """
+        is_valid_phone = isValidPhone(phone)
+        if not is_valid_phone:
+            return JsonResponse({'status': 'failed', 'message': 'invalid phone number'})
+        
+        # update the user and customer
+        user = User.objects.filter(username=phone).first()
+        if not user:
+            return JsonResponse({'status': 'failed', 'message': 'User does not exist'})
+        if role == "customer":
+            customer = Customer.objects.filter(profile=user).first()
+            if not customer:
+                return JsonResponse({'status': 'failed', 'message': 'invalid credentials'})
+            if address:
+                customer.address = address
+            if email:
+                customer.profile.email = email
+            if fName:
+                customer.profile.first_name = fName
+            if lName:
+                customer.profile.last_name = lName
+            customer.save()
+            customer.profile.save()
+
+            return JsonResponse({'status': 'success', 'message': 'customer updated successfully', "data" : {
+                "id": customer.id,
+                "name" : customer.profile.first_name + " " + customer.profile.last_name,
+                "username": customer.profile.username,
+                "email": customer.profile.email,
+                "phone": customer.phone_number,
+                "address": customer.address,
+                "role": "customer"
+            }})
+        if role == "resturent_owner":
+            restaurantOwner = ResturentOwner.objects.filter(profile=user).first()
+            if not restaurantOwner:
+                return JsonResponse({'status': 'failed', 'message': 'invalid credentials'})
+            if address:
+                restaurantOwner.address = address
+            if email:
+                restaurantOwner.profile.email = email
+            if fName:
+                restaurantOwner.profile.first_name = fName
+            if lName:
+                restaurantOwner.profile.last_name = lName
+            restaurantOwner.save()
+            restaurantOwner.profile.save()
+
+            return JsonResponse({'status': 'success', 'message': 'resturent owner updated successfully', "data" : {
+                "id": restaurantOwner.id,
+                "name" : restaurantOwner.profile.first_name + " " + restaurantOwner.profile.last_name,
+                "username": restaurantOwner.profile.username,
+                "email": restaurantOwner.profile.email,
+                "phone": restaurantOwner.phone_number,
+                "address": restaurantOwner.address,
+                "role": "resturent_owner"
+            }})
+    return JsonResponse({'status': 'error', 'message': 'Invalid Request'})
+        

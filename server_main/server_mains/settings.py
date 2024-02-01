@@ -140,3 +140,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+KEY_ID = "rzp_test_cuITzpvHjXU3KD"
+KEY_SECRET = "cTALsEUpER69Ulwat7DiycIg"

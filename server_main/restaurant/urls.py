@@ -14,4 +14,9 @@ urlpatterns = [
     path('get_customer_purchase/', views.get_customer_purchase, name='get_customer_purchase'),
     path('get_customer_table_booking/', views.get_customer_table_booking, name='get_customer_table_booking'),
     path('get_your_resturent/', views.get_your_restaurant, name='get_your_resturent'),
+    path('update_resturent/', views.update_resturent, name='update_resturent'),
+    path("get_your_resturent_details/", views.get_your_restaurant_details, name="get_your_resturent_details"),
+    path("update_resturent_details/", views.update_restaurant_details, name="update_resturent_details"),
+    path("get_table_amount/", views.get_table_amount, name="get_table_amount"),
+    path("get_order_amount/", views.get_order_amount, name="get_order_amount"),
 ]

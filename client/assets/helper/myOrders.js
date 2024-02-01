@@ -45,7 +45,7 @@ function loadTable(data){
 
 const loadCustomerOrders = async ()=>{
     const token = JSON.parse(localStorage.getItem('tokenAuth'))
-    const response = await fetch(`http://localhost:8000/restaurant/get_customer_table_booking/`,{
+    const response = await fetch(`http://bookeat.xyz/api/restaurant/get_customer_table_booking/`,{
         method: 'POST',
         body: JSON.stringify({
             customer: token.id
@@ -53,7 +53,7 @@ const loadCustomerOrders = async ()=>{
     })
     const data = await response.json()
     console.log("data is ",data)
-    const response2 = await fetch(`http://localhost:8000/restaurant/get_customer_purchase/`,{
+    const response2 = await fetch(`http://bookeat.xyz/api/restaurant/get_customer_purchase/`,{
         method: 'POST',
         body: JSON.stringify({
             customer: token.id

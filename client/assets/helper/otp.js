@@ -31,7 +31,7 @@ const verifyOTP = (e) => {
         return
     }
 
-    fetch('http://localhost:8000/customer_otp_verify/',
+    fetch('http://bookeat.xyz/api/customer_otp_verify/',
 
         {
             method: 'POST',

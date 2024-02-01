@@ -19,7 +19,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include("authApp.urls")),
-    path('restaurant/', include("restaurant.urls")),
+    path('api/admin/', admin.site.urls),
+    path('api/', include("authApp.urls")),
+    path('api/restaurant/', include("restaurant.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

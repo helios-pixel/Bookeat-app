@@ -37,7 +37,7 @@ const signup = (e) => {
     // send the data to the server
     if (userType === 'diner') {
 
-    fetch('http://localhost:8000/create_customer/',
+    fetch('http://bookeat.xyz/api/create_customer/',
         {
             method: 'POST',
             headers: {
@@ -77,7 +77,7 @@ const signup = (e) => {
     
     
     } else{
-        fetch('http://localhost:8000/create_resturent_owner/',
+        fetch('http://bookeat.xyz/api/create_resturent_owner/',
         {
             method: 'POST',
             headers: {
@@ -138,7 +138,7 @@ const login = (e) => {
     // send the data to the server
 
     if (userType === 'diner') {
-        fetch('http://localhost:8000/customer_login/',
+        fetch('http://bookeat.xyz/api/customer_login/',
 
             {
                 method: 'POST',
@@ -175,7 +175,7 @@ const login = (e) => {
             )
     }
     else{
-        fetch('http://localhost:8000/resturent_owner_login/',
+        fetch('http://bookeat.xyz/api/resturent_owner_login/',
         {
             method: 'POST',
             headers: {

@@ -1,7 +1,7 @@
 async function loadRestaurants(){
     const elem = document.getElementById("fillRestaurants")
     elem.innerHTML = `<h3 class="text-center">Loading...</h3>`
-    const response = await fetch("http://localhost:8000/restaurant/get_resturent/")
+    const response = await fetch("http://bookeat.xyz/api/restaurant/get_resturent/")
     const data = await response.json()
     console.log("data is ",data)
     console.log(data.data)
@@ -38,7 +38,7 @@ loadRestaurants()
 async function loadDetails(id){
     let elem = document.getElementById("fillRestaurants")
     elem.innerHTML = `<h3 class="text-center">Loading...</h3>`
-    const response  = await fetch(`http://localhost:8000/restaurant/get_resturent_menu/`,{
+    const response  = await fetch(`http://bookeat.xyz/api/restaurant/get_resturent_menu/`,{
         method:"POST",
         body:JSON.stringify({
             id
@@ -123,7 +123,7 @@ async function orderPickup(id){
     let elem = document.getElementById("fillRestaurants")
     document.getElementsByClassName("containerFull")[0] ? document.getElementsByClassName("containerFull")[0].remove() : ""
     elem.innerHTML += "<h3 class='text-center' id='loading'>Loading...</h3>"
-    const response = await fetch(`http://localhost:8000/restaurant/get_resturent_menu/`,{
+    const response = await fetch(`http://bookeat.xyz/api/restaurant/get_resturent_menu/`,{
         method:"POST",
         body:JSON.stringify({
             id
@@ -216,7 +216,7 @@ async function paymentTable(e, resturent){
         return
     }
 
-    const response = await fetch("http://localhost:8000/restaurant/get_table_amount/",{
+    const response = await fetch("http://bookeat.xyz/api/restaurant/get_table_amount/",{
         method:"POST",
         body:JSON.stringify({
             name,
@@ -266,7 +266,7 @@ async function paymentTable(e, resturent){
                     is_paid : true,
                 }
                 console.log(data)
-                const send_success_response = await fetch("http://localhost:8000/restaurant/create_customer_table_booking/",{
+                const send_success_response = await fetch("http://bookeat.xyz/api/restaurant/create_customer_table_booking/",{
                     method:"POST",
                     body:JSON.stringify(data)
                 })
@@ -330,7 +330,7 @@ async function payOrder(e, resturent){
     const menu_items_ids = selected_menu_items.map((menu)=>{
         return menu.children[0].id.split("menu")[1]
     })
-    const response = await fetch("http://localhost:8000/restaurant/get_order_amount/",{
+    const response = await fetch("http://bookeat.xyz/api/restaurant/get_order_amount/",{
         method:"POST",
         body:JSON.stringify({
             menu_items_ids,
@@ -378,7 +378,7 @@ async function payOrder(e, resturent){
                     menu_items : menu_items_ids
                 }
                 console.log(data)
-                const send_success_response = await fetch("http://localhost:8000/restaurant/create_customer_purchase/",{
+                const send_success_response = await fetch("http://bookeat.xyz/api/restaurant/create_customer_purchase/",{
                     method:"POST",
                     body:JSON.stringify(data)
                 })

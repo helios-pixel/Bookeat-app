@@ -101,7 +101,12 @@ def create_resturent_owner(request):
         resturent_owner.save()
         print(resturent_owner)
         print(resturent_owner.otp)
-        # send_otp(phone, otp)
+        response = send_otp(phone, otp)
+        print(response)
+        if response.status_code != 200:
+            user.delete()
+            resturent_owner.delete()
+            return JsonResponse({'status': 'failed', 'message': 'otp not sent'})
         """
         sending a final response
         """

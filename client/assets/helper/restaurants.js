@@ -4,9 +4,9 @@ async function loadRestaurants(){
     const response = await fetch("https://bookeat.xyz/api/restaurant/get_resturent/")
     const data = await response.json()
     console.log("data is ",data)
-    console.log(data.data)
-    const restaurantArray = Array.from(data.data)
     if(data.status==="success"){
+        console.log(data.data)
+        const restaurantArray = Array.from(data.data)
         elem.innerHTML = restaurantArray.map((restaurant)=>{
             return `
             <div class="col-sm-6 col-lg-4 col-xl-6 wow fadeIn" data-wow-delay=".3s"}">

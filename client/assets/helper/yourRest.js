@@ -88,7 +88,7 @@ const enterDetails = (restaurant_name, restaurant_address, restaurant_is_active,
                     <input type="number" placeholder="stock" class="item-stock input-cont mx-2">
                 </div>
                 </div>
-                <button onclick="addMoreItems()" class="common-btn text-center my-2" style="display: flex; align-items: center; flex-direction: row-reverse; justify-content: center; border: none;">Add More Items <i class="bi bi-plus"></i></button>
+                <button onclick="addMoreItems(event)" class="common-btn text-center my-2" style="display: flex; align-items: center; flex-direction: row-reverse; justify-content: center; border: none;">Add More Items <i class="bi bi-plus"></i></button>
             <!-- submit -->
             <input id="submit" type="submit" value="Save Details">
         </form>
@@ -294,7 +294,8 @@ const updateRestaurantDetails = async (e, restaurent_id) => {
 }
 
 
-const addMoreItems = () => {
+const addMoreItems = (e) => {
+    e.preventDefault()
     const elem = document.querySelector(".fillMenuItems")
     elem.innerHTML += `
     <div class="menu-item d-flex justify-around">

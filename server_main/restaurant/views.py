@@ -176,6 +176,9 @@ def create_customer_table_booking(request):
         if not customer:
             return JsonResponse({'status': 'failed', 'message': "customer doesn't exist"})
         
+        tables_available = ResturentTables.objects.filter(resturent=resturent, is_available=True).all()
+        if not tables_available:
+            return JsonResponse({'status': 'failed', 'message': 'invalid resturent table'})
         booking = CustomerTableBooking.objects.create(
             resturent = resturent,
             customer = customer,
@@ -190,9 +193,6 @@ def create_customer_table_booking(request):
         booking.save()
 
         # update resturent table
-        tables_available = ResturentTables.objects.filter(resturent=resturent, is_available=True).all()
-        if not tables_available:
-            return JsonResponse({'status': 'failed', 'message': 'invalid resturent table'})
         your_table_numbers = []
         if len(tables_available) >= int(tables):
             for i in range(0, int(tables)):
@@ -207,6 +207,8 @@ def create_customer_table_booking(request):
             print("else block")
             return JsonResponse({'status': 'failed', 'message': 'invalid no of tables'})
 
+        booking.table_numbers = ",".join([str(i) for i in your_table_numbers])
+        booking.save()
         print("here...")
         return JsonResponse({'status': 'success', 'message': 'customer table booking created successfully', "data" : {
             "id": booking.id,
@@ -216,7 +218,7 @@ def create_customer_table_booking(request):
             "amount_paid": booking.amount_paid,
             "no_of_diners": booking.no_of_diners,
             "tables": booking.tables,
-            "your_booked_table_numbers" : your_table_numbers,
+            "your_booked_table_numbers" : booking.table_numbers
         }})
     return JsonResponse({'status': 'failed', 'message': 'invalid request'})
 
@@ -344,7 +346,7 @@ def get_customer_table_booking(request):
                 "is_paid": item.is_paid,
                 "order_id": item.order_id,
                 "amount_paid": item.amount_paid,
-                "your_booked_table_numbers" : [i.table_number for i in ResturentTables.objects.filter(resturent=item.resturent, booked_by=customer)],
+                "your_booked_table_numbers" : item.table_numbers.split(","),
             })
         
         return JsonResponse({'status': 'success', 'message': 'customer table booking fetched successfully', "data" : data })
@@ -521,6 +523,7 @@ def update_restaurant_details(request):
             if resturent_table is None:
                 return JsonResponse({'status': 'failed', 'message': 'invalid resturent table'})
             resturent_table.is_available = item['is_available']
+            resturent_table.booked_by = None
             resturent_table.save()
 
         return JsonResponse({'status': 'success', 'message': 'resturent updated successfully'})

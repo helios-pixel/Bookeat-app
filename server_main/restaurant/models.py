@@ -71,6 +71,7 @@ class CustomerTableBooking(BaseModel):
     no_of_diners = models.IntegerField(default=0)
     is_paid = models.BooleanField(default=False)
     tables = models.IntegerField(default=0)
+    table_numbers = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
-        return self.customer.profile.first_name + " " + self.customer.profile.last_name
+        return self.customer.profile.first_name + " " + self.customer.profile.last_name + " " + self.table_numbers if self.table_numbers else "Table Booking"

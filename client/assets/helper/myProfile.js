@@ -8,12 +8,12 @@ function loadCustomerProfile(){
     const address = token.address === undefined ? '' : token.address
     console.log(token, first_name, last_name, phone)
     let input_elements = document.getElementsByTagName('input')
-    console.log(input_elements[0].value)
-    input_elements[1].value = first_name
-    input_elements[2].value = last_name
-    input_elements[3].value = email
-    input_elements[4].value = phone
-    input_elements[5].value = address
+    console.log("value is ", input_elements[1].value)
+    input_elements[0].value = first_name
+    input_elements[1].value = last_name
+    input_elements[2].value = email
+    input_elements[3].value = phone
+    input_elements[4].value = address
 }
 
 
@@ -34,11 +34,11 @@ async function submitMyDetails(e){
     e.preventDefault()
     const token = JSON.parse(localStorage.getItem('tokenAuth'))
     const inputElems = document.getElementsByTagName('input')
-    const first_name = inputElems[1].value
-    const last_name = inputElems[2].value
-    const email = inputElems[3].value
+    const first_name = inputElems[0].value
+    const last_name = inputElems[1].value
+    const email = inputElems[2].value
     const phone = token.phone
-    const address = inputElems[5].value
+    const address = inputElems[4].value
 
     const response = await fetch(`https://bookeat.xyz/api/update_customer/`,{
         method: 'POST',

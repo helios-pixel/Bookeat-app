@@ -138,7 +138,7 @@ const updateDetails = async (restaurant_name, restaurant_address, restaurant_is_
                     ${!table.is_available? `<i class="bi bi-x-circle-fill" style="font-size: 2rem; color: red; margin-left: 1rem;"></i> 
                         <select class="form-select" aria-label="Default select example" style="margin-left: 1rem;">
                         <option>Available</option>
-                            <option selected>Booked</option>
+                            <option selected>Booked by - ${table.booked_by ? table.booked_by : "Owner"}</option>
                         </select>
                     ` : `<i class="bi bi-check-circle-fill" style="font-size: 2rem; color: green; margin-left: 1rem;"></i> 
                         <select class="form-select" aria-label="Default select example" style="margin-left: 1rem;">

@@ -462,11 +462,20 @@ def get_your_restaurant_details(request):
         
         list_table = []
         for item in resturent_table:
-            list_table.append({
-                "id": item.id,
-                "table_number": item.table_number,
-                "is_available": item.is_available,
-            })
+            if item.booked_by:
+                list_table.append({
+                    "id": item.id,
+                    "table_number": item.table_number,
+                    "is_available": item.is_available,
+                    "booked_by": item.booked_by.profile.first_name + " " + item.booked_by.profile.last_name,
+                })
+            else:
+                list_table.append({
+                    "id": item.id,
+                    "table_number": item.table_number,
+                    "is_available": item.is_available,
+                    "booked_by": False,
+                })
         
         return JsonResponse({'status': 'success', 'message': 'resturent details fetched successfully', "data" : {
             "id": resturent.id,
@@ -523,7 +532,8 @@ def update_restaurant_details(request):
             if resturent_table is None:
                 return JsonResponse({'status': 'failed', 'message': 'invalid resturent table'})
             resturent_table.is_available = item['is_available']
-            resturent_table.booked_by = None
+            if item['is_available']:
+                resturent_table.booked_by = None
             resturent_table.save()
 
         return JsonResponse({'status': 'success', 'message': 'resturent updated successfully'})

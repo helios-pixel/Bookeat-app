@@ -12,7 +12,16 @@ class Resturent(BaseModel):
     resturent_image = models.ImageField(upload_to='resturent_images/', blank=True, null=True)
 
     def __str__(self):
-        return self.name + " " + self.resturent_owner.profile.first_name + " " + self.resturent_owner.profile.last_name + " " + self.resturent_owner.phone_number
+        revenue_generated = 0
+        from_table_booking = CustomerTableBooking.objects.filter(resturent=self)
+        if from_table_booking:
+            for table_booking in from_table_booking:
+                revenue_generated += table_booking.amount_paid
+        from_order_item = CustomerOrderItem.objects.filter(resturent=self)
+        if from_order_item:
+            for order_item in from_order_item:
+                revenue_generated += order_item.amount_paid
+        return self.name + " " + self.resturent_owner.profile.first_name + " " + self.resturent_owner.profile.last_name + " " + self.resturent_owner.phone_number + ", Revenue generated : ₹ " + str(revenue_generated)+"/-"
     
 class ResturentFoodItem(BaseModel):
     resturent = models.ForeignKey(Resturent, on_delete=models.CASCADE)

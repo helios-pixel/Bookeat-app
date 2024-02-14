@@ -10,6 +10,8 @@ class Resturent(BaseModel):
     address = models.TextField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
     resturent_image = models.ImageField(upload_to='resturent_images/', blank=True, null=True)
+    source = models.CharField(max_length=100, blank=True, null=True)
+    destination = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         revenue_generated = 0

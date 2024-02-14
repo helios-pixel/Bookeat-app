@@ -23,7 +23,7 @@ class Customer(BaseModel):
     otp = models.CharField(max_length=6, blank=True, null=True)
 
     def __str__(self):
-        return self.profile.first_name + " " + self.profile.last_name + " "
+        return self.phone_number + " - " + self.profile.first_name + " " + self.profile.last_name
     
     
 """
@@ -37,5 +37,5 @@ class ResturentOwner(BaseModel):
     otp  = models.CharField(max_length=6, blank=True, null=True)
 
     def __str__(self):
-        return self.profile.email
+        return self.phone_number + " - " + self.profile.first_name + " " + self.profile.last_name
     

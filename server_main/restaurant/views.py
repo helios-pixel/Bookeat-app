@@ -18,6 +18,8 @@ def create_resturent(request):
         address = data['address']
         is_active = data['is_active']
         restaurant_image = data['restaurant_image']
+        source = data['source']
+        destination = data['destination']
         print(restaurantOwner, name, address, is_active, restaurant_image)
 
         restaurant_owner = ResturentOwner.objects.filter(id=restaurantOwner).first()
@@ -25,7 +27,7 @@ def create_resturent(request):
         if restaurant_owner is None:
             return JsonResponse({'status': 'failed', 'message': 'invalid restaurant owner'})
         
-        resturent = Resturent.objects.create(resturent_owner=restaurant_owner, name=name, address=address, is_active=is_active, resturent_image=restaurant_image);
+        resturent = Resturent.objects.create(resturent_owner=restaurant_owner, name=name, address=address, is_active=is_active, resturent_image=restaurant_image, source=source, destination=destination)
         resturent.save()
 
         return JsonResponse({'status': 'success', 'message': 'resturent created successfully', "data" : {
@@ -236,6 +238,8 @@ def get_resturent(request):
                 "is_active": item.is_active,
                 "owner": item.resturent_owner.profile.first_name + " " + item.resturent_owner.profile.last_name,
                 "tables_available" : len(ResturentTables.objects.filter(resturent=item, is_available=True)),
+                "source" : item.source,
+                "destination" : item.destination,
             })
         return JsonResponse({'status': 'success', 'message': 'resturent fetched successfully', "data" : data})
     return JsonResponse({'status': 'failed', 'message': 'invalid request'})

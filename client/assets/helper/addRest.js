@@ -9,6 +9,8 @@ function addRestaurant(e){
     const name = document.getElementById('name').value
     const address = document.getElementById('address').value
     const image = document.getElementById('image').value
+    const source = document.getElementById('source').value
+    const destination = document.getElementById('destination').value
 
     if(name === ''){
         const alertMessage = document.getElementById('alert-message')
@@ -40,6 +42,26 @@ function addRestaurant(e){
         return
     }
 
+    if(source === ''){
+        const alertMessage = document.getElementById('alert-message')
+        alertMessage.innerHTML = 'Source cannot be empty'
+        const alert = document.getElementById('alert')
+        alert.classList.remove('d-none')
+        submitBtn.disabled = false
+        submitBtn.value = 'Add Restaurant'
+        return
+    }
+
+    if(destination === ''){
+        const alertMessage = document.getElementById('alert-message')
+        alertMessage.innerHTML = 'Destination cannot be empty'
+        const alert = document.getElementById('alert')
+        alert.classList.remove('d-none')
+        submitBtn.disabled = false
+        submitBtn.value = 'Add Restaurant'
+        return
+    }
+
     // send data to server
 
     fetch('https://bookeat.xyz/api/restaurant/create_resturent/',
@@ -54,6 +76,8 @@ function addRestaurant(e){
             address: address,
             restaurant_image: image,
             is_active: true,
+            source: source,
+            destination: destination
         })
     }).then(res => res.json()).then(data => {
         console.log(data)

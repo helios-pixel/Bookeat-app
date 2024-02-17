@@ -35,6 +35,10 @@ class ResturentOwner(BaseModel):
     phone_number = models.CharField(max_length=10, blank=True, null=True)
     is_otp_verified = models.BooleanField(default=False)
     otp  = models.CharField(max_length=6, blank=True, null=True)
+    license_num = models.CharField(max_length=100, blank=True, null=True)
+    pan = models.CharField(max_length=100, blank=True, null=True)
+    gstin = models.CharField(max_length=100, blank=True, null=True)
+
 
     def __str__(self):
         return self.phone_number + " - " + self.profile.first_name + " " + self.profile.last_name

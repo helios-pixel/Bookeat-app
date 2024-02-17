@@ -118,6 +118,21 @@
                 <div class="input-cont">
                     <i class="bx bx-phone"></i><input type="number" placeholder="Phone Number" id="phoneNumber">
                 </div>
+                <!-- license -->
+                <label for="license">License Number*</label>
+                <div class="input-cont">
+                    <i class="bx bx-id-card"></i><input type="text" placeholder="License Number" id="license">
+                </div>
+                <!-- Pan Number -->
+                <label for="pan">Pan Number*</label>
+                <div class="input-cont">
+                    <i class="bx bx-id-card"></i><input type="text" placeholder="Pan Number" id="pan">
+                </div>
+                <!-- GSTIN -->
+                <label for="gstin">GSTIN*</label>
+                <div class="input-cont">
+                    <i class="bx bx-id-card"></i><input type="text" placeholder="GSTIN" id="gstin">
+                </div>
                 <!-- password -->
                 <label for="password">Password*</label>
                 <div class="input-cont">
@@ -131,7 +146,7 @@
                 <label for="userType">User Type*</label>
                 <select name="userType" id="userType" class="input-cont">
                     <option value="diner">Diner</option>
-                    <option value="restaurant">Restaurant Owner</option>
+                    <option value="restaurant" selected>Restaurant Owner</option>
                 </select>
                 <!-- submit -->
                 <input id="submit" type="submit" value="Sign Up">
@@ -143,5 +158,27 @@
     </div>
 
     <script src="./assets/helper/clientAuth.js"></script>
+    <script>
+        // make "License, Pan and GSTIN" fields display none if the user is a diner and display block if the user is a restaurant owner with label
+        document.getElementById('userType').addEventListener('change', function(){
+            if(this.value === 'diner'){
+                document.getElementById('license').parentElement.style.display = 'none';
+                document.getElementById('pan').parentElement.style.display = 'none';
+                document.getElementById('gstin').parentElement.style.display = 'none';
+                // Make their label display none
+                document.getElementById('license').parentElement.previousElementSibling.style.display = 'none';
+                document.getElementById('pan').parentElement.previousElementSibling.style.display = 'none';
+                document.getElementById('gstin').parentElement.previousElementSibling.style.display = 'none';
+            }else{
+                document.getElementById('license').parentElement.style.display = 'flex';
+                document.getElementById('pan').parentElement.style.display = 'flex';
+                document.getElementById('gstin').parentElement.style.display = 'flex';
+                // Make their label display block
+                document.getElementById('license').parentElement.previousElementSibling.style.display = 'block';
+                document.getElementById('pan').parentElement.previousElementSibling.style.display = 'block';
+                document.getElementById('gstin').parentElement.previousElementSibling.style.display = 'block';
+            }
+        });
+    </script>
     </body>
 </html>

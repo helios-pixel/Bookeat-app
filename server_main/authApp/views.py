@@ -79,6 +79,9 @@ def create_resturent_owner(request):
         phone = data.get('phone')
         password = data.get('password')
         confirm_password = data.get('confirm_password')
+        license_num = data.get('license_num')
+        pan = data.get('pan')
+        gstin = data.get('gstin')
         """
         validate the email and phone number
         """
@@ -97,7 +100,7 @@ def create_resturent_owner(request):
         user.set_password(password)
         otp = create_otp()
         user.save()
-        resturent_owner = ResturentOwner.objects.create(profile=user, phone_number=phone, otp=otp)
+        resturent_owner = ResturentOwner.objects.create(profile=user, phone_number=phone, otp=otp, license_num=license_num, pan=pan, gstin=gstin)
         resturent_owner.save()
         print(resturent_owner)
         print(resturent_owner.otp)
@@ -260,7 +263,6 @@ def verify_otp(request):
         return JsonResponse({'status': 'error', 'message': 'Invalid Request'})
         
     return JsonResponse({'status': 'error', 'message': 'Invalid Request'})
-
 
 @csrf_exempt
 def update_customer(request):

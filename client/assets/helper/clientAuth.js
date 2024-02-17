@@ -7,6 +7,10 @@ const signup = (e) => {
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
     const userType = document.getElementById('userType').value;
+    const license = document.getElementById('license').value;
+    const pan = document.getElementById('pan').value;
+    const gstin = document.getElementById('gstin').value;
+
     // check if the full name is empty
     if (fullName === '') {
         const alertMessage = document.getElementById('alert-message');
@@ -77,6 +81,18 @@ const signup = (e) => {
     
     
     } else{
+        // Check if the license, pan and gstin are empty
+
+        if (license === '' || pan === '' || gstin === '') {
+            const alertMessage = document.getElementById('alert-message');
+            alertMessage.innerHTML = 'License, PAN and GSTIN cannot be empty';
+            const alert = document.getElementById('alert');
+            alert.classList.remove('d-none');
+            submitBtn.disabled = false;
+            return;
+        }
+
+
         fetch('https://bookeat.xyz/api/create_resturent_owner/',
         {
             method: 'POST',
@@ -87,7 +103,10 @@ const signup = (e) => {
                 name: fullName,
                 phone: phoneNumber,
                 password: password,
-                confirm_password: confirmPassword
+                confirm_password: confirmPassword,
+                license_num: license,
+                pan: pan,
+                gstin: gstin
             })
         }).then(res => res.json()).then(data => {
             console.log(data);

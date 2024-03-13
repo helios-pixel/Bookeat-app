@@ -248,3 +248,228 @@ const logout = () => {
         logoutBtn.innerHTML = "Logging out..."
     })
 }
+
+const submitPhnForPwd=(e) => {
+    e.preventDefault();
+    const submitBtn = document.getElementById('submit');
+    submitBtn.disabled = true;
+    const phoneNumber = document.getElementById('phoneNumber').value;
+    // check the phone number
+
+    if (phoneNumber.length !== 10) {
+        const alertMessage = document.getElementById('alert-message');
+        alertMessage.innerHTML = 'Phone number must be 10 digits';
+        const alert = document.getElementById('alert');
+        alert.classList.remove('d-none');
+        submitBtn.disabled = false;
+        return;
+    }
+    // send the data to the server
+
+    const response = fetch('https://bookeat.xyz/api/forgot_password/',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                phone: phoneNumber
+            })
+        }).then(res => res.json()).then(data => {
+            console.log(data);
+            if (data.status !== "success") {
+                const alertMessage = document.getElementById('alert-message');
+                alertMessage.innerHTML = data.message;
+                const alert = document.getElementById('alert');
+                alert.classList.remove('d-none');
+                submitBtn.disabled = false;
+                return;
+            } else {
+                const alertMessage = document.getElementById('alert-message');
+                alertMessage.innerHTML = 'OTP sent successfully';
+                const msg = document.getElementById('msg-al');
+                msg.innerHTML = 'success';
+                const alert = document.getElementById('alert');
+                alert.classList.replace('alert-danger', 'alert-success');
+                alert.classList.remove('d-none');
+                localStorage.setItem('tokenAuth' , JSON.stringify(data.data));
+                document.getElementById('phoneNumber').setAttribute('readonly', 'true');
+                const form = document.getElementById('formForFOrgotpwd');
+                const label = document.createElement('label');
+                label.setAttribute('for', 'otp');
+                label.innerHTML = 'OTP*';
+                form.appendChild(label);
+                const div = document.createElement('div');
+                div.classList.add('input-cont');
+                form.appendChild(div);
+                const i = document.createElement('i');
+                i.classList.add('bx');
+                i.classList.add('bx-phone');
+                div.appendChild(i);
+                const input = document.createElement('input');
+                input.setAttribute('type', 'number');
+                input.setAttribute('id', 'otp');
+                input.setAttribute('placeholder', 'OTP');
+                div.appendChild(input);
+                form.setAttribute('onsubmit', `submitOtpForPwd(event, ${phoneNumber})`);
+                form.removeChild(submitBtn);
+                const btn = document.createElement('button');
+                btn.classList.add('common-btn');
+                btn.innerHTML = 'Submit OTP';
+                form.appendChild(btn);
+                const pOld = document.querySelector('.form-cont > p');
+                pOld.remove();
+                const p = document.createElement('p');
+                p.className = 'text-center';
+                p.classList.add('mt-3');
+                p.innerHTML = "Don't have an account? <a href='../client/register.html'>Sign Up</a>";
+                form.appendChild(p);
+            }
+        }
+        )
+}
+
+const submitOtpForPwd=(e, phone) => {
+    e.preventDefault();
+    const submitBtn = document.querySelector('.common-btn');
+    submitBtn.disabled = true;
+    const otp = document.getElementById('otp').value;
+    // check the phone number
+
+    if (otp.length !== 6) {
+        const alertMessage = document.getElementById('alert-message');
+        alertMessage.innerHTML = 'OTP must be 6 digits';
+        const alert = document.getElementById('alert');
+        alert.classList.remove('d-none');
+        submitBtn.disabled = false;
+        return;
+    }
+    // send the data to the server
+
+    const response = fetch('https://bookeat.xyz/api/validate_otp/',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                otp: otp,
+                phone: phone
+            })
+        }).then(res => res.json()).then(data => {
+            console.log(data);
+            if (data.status !== "success") {
+                const alertMessage = document.getElementById('alert-message');
+                alertMessage.innerHTML = data.message;
+                const alert = document.getElementById('alert');
+                alert.classList.remove('d-none');
+                submitBtn.disabled = false;
+                return;
+            } else {
+                const alertMessage = document.getElementById('alert-message');
+                alertMessage.innerHTML = 'OTP verified successfully';
+                const msg = document.getElementById('msg-al');
+                msg.innerHTML = 'success';
+                const alert = document.getElementById('alert');
+                alert.classList.replace('alert-danger', 'alert-success');
+                alert.classList.remove('d-none');
+                localStorage.setItem('tokenAuth' , JSON.stringify(data.data));
+                document.getElementById('otp').setAttribute('readonly', 'true');
+                const form = document.getElementById('formForFOrgotpwd');
+                form.innerHTML = '';
+                form.setAttribute('onsubmit', `submitNewPwd(event, ${phone})`);
+                // form.removeChild(submitBtn);
+                const label = document.createElement('label');
+                label.setAttribute('for', 'password');
+                label.innerHTML = 'New Password*';
+                form.appendChild(label);
+                const div = document.createElement('div');
+                div.classList.add('input-cont');
+                form.appendChild(div);
+                const i = document.createElement('i');
+                i.classList.add('bx');
+                i.classList.add('bx-lock');
+                div.appendChild(i);
+                const input = document.createElement('input');
+                input.setAttribute('type', 'password');
+                input.setAttribute('id', 'password');
+                input.setAttribute('placeholder', 'New Password');
+                div.appendChild(input);
+                const label1 = document.createElement('label');
+                label1.setAttribute('for', 'confirmPassword');
+                label1.innerHTML = 'Confirm Password*';
+                form.appendChild(label1);
+                const div1 = document.createElement('div');
+                div1.classList.add('input-cont');
+                form.appendChild(div1);
+                const i1 = document.createElement('i');
+                i1.classList.add('bx');
+                i1.classList.add('bx-lock');
+                div1.appendChild(i1);
+                const input1 = document.createElement('input');
+                input1.setAttribute('type', 'password');
+                input1.setAttribute('id', 'confirmPassword');
+                input1.setAttribute('placeholder', 'Confirm Password');
+                div1.appendChild(input1);
+                const btn = document.createElement('button');
+                btn.classList.add('common-btn');
+                btn.innerHTML = 'Submit';
+                form.appendChild(btn);
+            }
+        }
+        )
+}
+
+const submitNewPwd = (e, phone) => {
+    e.preventDefault();
+    const submitBtn = document.querySelector('.common-btn');
+    submitBtn.disabled = true;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    // check the phone number
+
+    if (password !== confirmPassword) {
+        const alertMessage = document.getElementById('alert-message');
+        alertMessage.innerHTML = 'Password does not match';
+        const alert = document.getElementById('alert');
+        alert.classList.remove('d-none');
+        submitBtn.disabled = false;
+        return;
+    }
+    // send the data to the server
+
+    const response = fetch('https://bookeat.xyz/api/reset_password/',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                password: password,
+                phone: phone
+            })
+        }).then(res => res.json()).then(data => {
+            console.log(data);
+            if (data.status !== "success") {
+                const alertMessage = document.getElementById('alert-message');
+                alertMessage.innerHTML = data.message;
+                const alert = document.getElementById('alert');
+                alert.classList.remove('d-none');
+                submitBtn.disabled = false;
+                return;
+            } else {
+                const alertMessage = document.getElementById('alert-message');
+                alertMessage.innerHTML = 'Password reset successfully';
+                const msg = document.getElementById('msg-al');
+                msg.innerHTML = 'success';
+                const alert = document.getElementById('alert');
+                alert.classList.replace('alert-danger', 'alert-success');
+                alert.classList.remove('d-none');
+                localStorage.setItem('tokenAuth' , JSON.stringify(data.data));
+                setTimeout(() => {
+                    window.location.pathname = '/client/siginin.html';
+                }, 3000);
+            }
+        }
+        )
+}

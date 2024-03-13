@@ -341,3 +341,142 @@ def update_customer(request):
             }})
     return JsonResponse({'status': 'error', 'message': 'Invalid Request'})
         
+@csrf_exempt
+def forgot_password(request):
+    if request.method == "POST":
+        """
+        taking all the required data from the request
+        """
+        data = json.loads(request.body.decode('utf-8'))
+        phone = data.get('phone')
+
+        """
+        validate phone number
+        """
+        is_valid_phone = isValidPhone(phone)
+        if not is_valid_phone:
+            return JsonResponse({'status': 'failed', 'message': 'invalid phone number'})
+        """
+        check if the user exists
+        """
+        user = User.objects.filter(username=phone).first()
+        if not user:
+            return JsonResponse({'status': 'failed', 'message': 'User does not exist'})
+        """
+        check if user is customer or resturent owner
+        """
+        customer = Customer.objects.filter(profile=user).first()
+        if customer:
+            otp = create_otp()
+            customer.otp = otp
+            customer.save()
+            response = send_otp(phone, otp)
+            if response.status_code != 200:
+                return JsonResponse({'status': 'failed', 'message': 'otp not sent'})
+            return JsonResponse({'status': 'success', 'message': 'otp sent successfully', "data" : {
+                "id": customer.id,
+                "phone": customer.phone_number,
+            }})
+        restaurantOwner = ResturentOwner.objects.filter(profile=user).first()
+        if restaurantOwner:
+            otp = create_otp()
+            restaurantOwner.otp = otp
+            restaurantOwner.save()
+            response = send_otp(phone, otp)
+            if response.status_code != 200:
+                return JsonResponse({'status': 'failed', 'message': 'otp not sent'})
+            return JsonResponse({'status': 'success', 'message': 'otp sent successfully', "data" : {
+                "id": restaurantOwner.id,
+                "phone": restaurantOwner.phone_number,
+            }})
+        return JsonResponse({'status': 'failed', 'message': 'invalid credentials'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid Request'})
+
+@csrf_exempt
+def validate_otp(request):
+    if request.method == "POST":
+        """
+        taking all the required data from the request
+        """
+        data = json.loads(request.body.decode('utf-8'))
+        phone = data.get('phone')
+        otp = data.get('otp')
+        
+        """
+        validate phone number
+        """
+        # is_valid_phone = isValidPhone(phone)
+        # if not is_valid_phone:
+        #     return JsonResponse({'status': 'failed', 'message': 'invalid phone number'})
+        """
+        check if the user exists
+        """
+        user = User.objects.filter(username=phone).first()
+        if not user:
+            return JsonResponse({'status': 'failed', 'message': 'User does not exist'})
+        """
+        check if user is customer or resturent owner
+        """
+        customer = Customer.objects.filter(profile=user).first()
+        if customer:
+            if otp != customer.otp:
+                return JsonResponse({'status': 'failed', 'message': 'invalid otp'})
+            return JsonResponse({'status': 'success', 'message': 'otp verified successfully', "data" : {
+                "id": customer.id,
+                "phone": customer.phone_number,
+            }})
+        restaurantOwner = ResturentOwner.objects.filter(profile=user).first()
+        if restaurantOwner:
+            if otp != restaurantOwner.otp:
+                return JsonResponse({'status': 'failed', 'message': 'invalid otp'})
+            return JsonResponse({'status': 'success', 'message': 'otp verified successfully', "data" : {
+                "id": restaurantOwner.id,
+                "phone": restaurantOwner.phone_number,
+            }})
+        return JsonResponse({'status': 'failed', 'message': 'invalid credentials'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid Request'})
+
+@csrf_exempt
+def reset_password(request):
+    if request.method == "POST":
+        """
+        taking all the required data from the request
+        """
+        data = json.loads(request.body.decode('utf-8'))
+        phone = data.get('phone')
+        password = data.get('password')
+        confirm_password = data.get('confirm_password')
+        
+        """
+        validate phone number
+        """
+        # is_valid_phone = isValidPhone(phone)
+        # if not is_valid_phone:
+        #     return JsonResponse({'status': 'failed', 'message': 'invalid phone number'})
+        """
+        check if the user exists
+        """
+        user = User.objects.filter(username=phone).first()
+        if not user:
+            return JsonResponse({'status': 'failed', 'message': 'User does not exist'})
+        """
+        check if user is customer or resturent owner
+        """
+        customer = Customer.objects.filter(profile=user).first()
+        if customer:
+            user.set_password(password)
+            user.save()
+            return JsonResponse({'status': 'success', 'message': 'password reset successfully', "data" : {
+                "id": customer.id,
+                "phone": customer.phone_number,
+            }})
+        restaurantOwner = ResturentOwner.objects.filter(profile=user).first()
+        if restaurantOwner:
+            user.set_password(password)
+            user.save()
+            return JsonResponse({'status': 'success', 'message': 'password reset successfully', "data" : {
+                "id": restaurantOwner.id,
+                "phone": restaurantOwner.phone_number,
+            }})
+        return JsonResponse({'status': 'failed', 'message': 'invalid credentials'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid Request'})

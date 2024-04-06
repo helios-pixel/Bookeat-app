@@ -55,6 +55,7 @@ class ResturentTables(BaseModel):
 class CustomerOrderItem(BaseModel):
     resturent = models.ForeignKey(Resturent, on_delete=models.CASCADE)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    time = models.CharField(max_length=100, blank=True, null=True)
     amount_paid = models.FloatField(default=0)
     is_paid = models.BooleanField(default=False)
     order_id = models.CharField(max_length=100, blank=True, null=True)

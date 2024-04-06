@@ -29,7 +29,8 @@ async function loadRestaurants(){
                     <div class="d-flex flex-column">
                         <a class='common-btn p-2 my-1 text-center' href="#" onclick="enterDetails('${restaurant.name}', '${restaurant.address}', ${restaurant.is_active}, '${restaurant.id}')"><span>Enter Details &nbsp; <i class="bi bi-pencil-square"></i></span></a>
                         <a class='common-btn p-2 my-1 text-center' href="#" onclick="updateDetails('${restaurant.name}', '${restaurant.address}', ${restaurant.is_active}, '${restaurant.id}')"><span>Update Details &nbsp; <i class="bi bi-pencil-square"></i></span></a>
-                    </div>
+                        <a class="common-btn p-2 my-1 text-center" onclick="placedOrders('${restaurant.id}')"><span>Place Order &nbsp; <i class="bi bi-cart-plus"></i></span></a>
+                        </div>
                 </div>
             </div>
         </div>

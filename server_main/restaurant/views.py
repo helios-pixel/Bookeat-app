@@ -118,6 +118,7 @@ def create_customer_purchase(request):
         customer = data['customer']
         menu_items = data['menu_items']
         is_paid = data['is_paid']
+        time = data['time']
 
         resturent = Resturent.objects.filter(id=restaurant).first()
         customer = Customer.objects.filter(id=customer).first()
@@ -135,6 +136,7 @@ def create_customer_purchase(request):
             order_id = order_id,
             payment_id = payment_id,
             payment_signature = signature,
+            time = time,
         )
         purchase.save()
 
@@ -301,6 +303,8 @@ def get_customer_purchase(request):
 
         customer = Customer.objects.filter(id=customer).first()
 
+    
+
         if not customer:
             return JsonResponse({'status': 'failed', 'message': 'invalid customer'})
         
@@ -315,11 +319,43 @@ def get_customer_purchase(request):
                 "restaurant_name": item.resturent.name,
                 "order_id": item.order_id,
                 "amount_paid": item.amount_paid,
+                "time" : item.time,
                 "menu_items": [i.food_item.name for i in CustomerOrderItemDetails.objects.filter(order_item=item)],
             })
 
         return JsonResponse({'status': 'success', 'message': 'customer purchase fetched successfully', "data" : data})
     return JsonResponse({'status': 'failed', 'message': 'invalid request'})
+
+@csrf_exempt
+def get_customer_purchase_for_owner(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        restaurant_id = data['id']
+
+        resturent = Resturent.objects.filter(id=restaurant_id).first()
+
+        if not resturent:
+            return JsonResponse({'status': 'failed', 'message': 'invalid resturent'})
+        
+        customer_purchase = CustomerOrderItem.objects.filter(resturent=resturent).all()
+        if not customer_purchase:
+            return JsonResponse({'status': 'failed', 'message': 'No purchase found'})
+        
+        data = []
+        for item in customer_purchase:
+            data.append({
+                "user_name": item.customer.profile.first_name + " " + item.customer.profile.last_name,
+                "restaurant_name": item.resturent.name,
+                "order_id": item.order_id,
+                "amount_paid": item.amount_paid,
+                "time" : item.time,
+                "menu_items": [i.food_item.name for i in CustomerOrderItemDetails.objects.filter(order_item=item)],
+            })
+
+        return JsonResponse({'status': 'success', 'message': 'customer purchase fetched successfully', "data" : data})
+    return JsonResponse({'status': 'failed', 'message': 'invalid request'})
+    
+            
 
 @csrf_exempt
 def get_customer_table_booking(request):
@@ -418,8 +454,17 @@ def update_resturent(request):
 
         for item in menu_items:
             if item["name"] != "" and item["price"] != "" and item["stock"] != "":
-                resturent_menu = ResturentFoodItem.objects.create(resturent=resturent, name=item['name'], food_image=item['image'], description="", price=item['price'], is_active=True, stock=item['stock']) 
-                resturent_menu.save()
+                # check if the same restaurant have the same item then do not update it
+                resturent_menu = ResturentFoodItem.objects.filter(resturent=resturent, name=item['name']).first()
+                if resturent_menu is None:
+                    resturent_menu = ResturentFoodItem.objects.create(resturent=resturent, name=item['name'], food_image=item['image'], description="", price=item['price'], is_active=True, stock=item['stock']) 
+                    resturent_menu.save()  
+                # else update the item
+                else:
+                    resturent_menu.food_image = item['image']
+                    resturent_menu.price = item['price']
+                    resturent_menu.stock = item['stock']
+                    resturent_menu.save() 
 
         if tables != '0' and tables != 0 and tables != '':
             for i in range(1, int(tables)+1):

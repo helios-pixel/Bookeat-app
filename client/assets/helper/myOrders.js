@@ -11,6 +11,7 @@ function loadCustomerFoodItems(data2){
             <td>${item.restaurant_name}</td>
             <td>${item.order_id}</td>
             <td class="text-success">₹${item.amount_paid}</td>
+            <td>${item.time}</td>
             <td>
                 <ul>
                     ${item.menu_items.map((items)=>{return `<li>${items}</li>`})}

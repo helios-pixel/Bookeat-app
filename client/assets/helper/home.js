@@ -82,6 +82,11 @@ function myOrders(){
     window.location.pathname = '/client/your_orders.html'
 }
 
+function placedOrders(id){
+    localStorage.setItem('restaurant_id_instance',id)
+    window.location.pathname = '/client/placed_orders.html'
+}
+
 function editProfile(){
     window.location.pathname = '/client/editProfile.html'
 }

@@ -146,6 +146,10 @@ async function orderPickup(id){
                     <div class="input-cont">
                         <i class="bx bx-user"></i><input type="text" id="name" placeholder="Your Name">
                     </div>
+                    <label for="name">Time for Pickup</label>
+                    <div class="input-cont">
+                        <i class="bx bx-user"></i><input type="time" required id="time" placeholder="Enter time of today only...">
+                    </div>
                     <!-- select multiple -->
                     <label>Select Menu Items*</label>
                     
@@ -307,6 +311,7 @@ async function paymentTable(e, resturent){
 async function payOrder(e, resturent){
     e.preventDefault()
     const name = document.getElementById("name").value
+    const time = document.getElementById("time").value
     const elem = document.getElementById("alert")
     const message = document.getElementById("alert-message")
     const msg_al = document.getElementById("msg-al")
@@ -321,6 +326,14 @@ async function payOrder(e, resturent){
         msg_al.innerHTML = "Oh Snap!"
         return
     }
+
+    if(time.length===0){
+        elem.classList.remove("d-none")
+        message.innerHTML = "Please Enter Time"
+        msg_al.innerHTML = "Oh Snap!"
+        return
+    }
+
     if(selected_menu_items.length===0){
         elem.classList.remove("d-none")
         message.innerHTML = "Please Select Atleast One Menu Item"
@@ -372,6 +385,7 @@ async function payOrder(e, resturent){
                     payment_id,
                     signature,
                     amount,
+                    time,
                     customer : JSON.parse(userDetails).id,
                     restaurant : resturent,
                     is_paid : true,

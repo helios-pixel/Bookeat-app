@@ -12,6 +12,7 @@ urlpatterns = [
     path('get_resturent_menu/', views.get_resturent_menu, name='get_resturent_menu'),
     path('get_resturent_table/', views.get_resturent_table, name='get_resturent_table'),
     path('get_customer_purchase/', views.get_customer_purchase, name='get_customer_purchase'),
+    path("get_customer_purchase_for_owner/", views.get_customer_purchase_for_owner, name="get_customer_purchase_for_owner"),
     path('get_customer_table_booking/', views.get_customer_table_booking, name='get_customer_table_booking'),
     path('get_your_resturent/', views.get_your_restaurant, name='get_your_resturent'),
     path('update_resturent/', views.update_resturent, name='update_resturent'),

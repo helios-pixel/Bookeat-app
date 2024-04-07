@@ -141,10 +141,11 @@ def create_customer_purchase(request):
         purchase.save()
 
         for item in menu_items:
-            resturent_menu = ResturentFoodItem.objects.filter(id=item).first()
+            print(item)
+            resturent_menu = ResturentFoodItem.objects.filter(id=item['id']).first()
             if not resturent_menu:
                 return JsonResponse({'status': 'failed', 'message': 'invalid resturent menu'})
-            purchase_details = CustomerOrderItemDetails.objects.create(order_item=purchase, food_item=resturent_menu, price=resturent_menu.price)
+            purchase_details = CustomerOrderItemDetails.objects.create(order_item=purchase, food_item=resturent_menu, price=resturent_menu.price, quantity=item['quantity'])
             purchase_details.save()
 
         return JsonResponse({'status': 'success', 'message': 'customer purchase created successfully', "data" : {
@@ -303,8 +304,6 @@ def get_customer_purchase(request):
 
         customer = Customer.objects.filter(id=customer).first()
 
-    
-
         if not customer:
             return JsonResponse({'status': 'failed', 'message': 'invalid customer'})
         
@@ -321,6 +320,7 @@ def get_customer_purchase(request):
                 "amount_paid": item.amount_paid,
                 "time" : item.time,
                 "menu_items": [i.food_item.name for i in CustomerOrderItemDetails.objects.filter(order_item=item)],
+                "quantity": [i.quantity for i in CustomerOrderItemDetails.objects.filter(order_item=item)],
             })
 
         return JsonResponse({'status': 'success', 'message': 'customer purchase fetched successfully', "data" : data})
@@ -350,6 +350,7 @@ def get_customer_purchase_for_owner(request):
                 "amount_paid": item.amount_paid,
                 "time" : item.time,
                 "menu_items": [i.food_item.name for i in CustomerOrderItemDetails.objects.filter(order_item=item)],
+                "quantity": [i.quantity for i in CustomerOrderItemDetails.objects.filter(order_item=item)],
             })
 
         return JsonResponse({'status': 'success', 'message': 'customer purchase fetched successfully', "data" : data})
@@ -645,14 +646,26 @@ def get_order_amount(request):
         if not resturent:
             return JsonResponse({'status': 'failed', 'message': 'invalid resturent'})
         
-        menu_items = ResturentFoodItem.objects.filter(id__in=menu_ids).all()
+        print("menu_ids are =============",menu_ids)
+        # menu_ids are ============= [{'id': '26', 'quantity': '3'}]
+
+        # menu_items = ResturentFoodItem.objects.filter(id__in=menu_ids.keys()).all()
+        menu_items = []
+        for item in menu_ids:
+            menu_item = ResturentFoodItem.objects.filter(id=item['id']).first()
+            if not menu_item:
+                return JsonResponse({'status': 'failed', 'message': 'invalid menu items'})
+            menu_items.append(menu_item)
         print("menu_items are =============",menu_items)
         if not menu_items:
             return JsonResponse({'status': 'failed', 'message': 'invalid menu items'})
         
+        # menu_ids are ============= [{'id': '27', 'quantity': '4'}]
+        # menu_items are ============= [<ResturentFoodItem: Dal mkhi>]
+
         amount = 0
         for item in menu_items:
-            amount += item.price
+            amount += item.price * int(menu_ids[menu_items.index(item)]['quantity'])
 
         key_id = settings.KEY_ID
         

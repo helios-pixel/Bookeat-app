@@ -14,7 +14,7 @@ function loadCustomerFoodItems(data2){
             <td>${item.time}</td>
             <td>
                 <ul>
-                    ${item.menu_items.map((items)=>{return `<li>${items}</li>`})}
+                    ${item.menu_items.map((items, index)=>{return `<li>${items} ( x ${item.quantity[index]}) </li>`})}
                 </ul>
             </td>
         `

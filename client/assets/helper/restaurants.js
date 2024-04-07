@@ -119,6 +119,36 @@ function setTableCount(e){
     elem.value = Math.ceil(e.target.value/4)
 }
 
+function up(e,max, id) {
+    e.preventDefault()
+    const elem = document.getElementById(`label${id}`)
+    if(elem.classList.contains("click_here")){
+        console.log("called")
+        document.getElementById(`myNumber${id}`).value = parseInt(document.getElementById(`myNumber${id}`).value) + 1;
+        if (document.getElementById(`myNumber${id}`).value >= parseInt(max)) {
+            document.getElementById(`myNumber${id}`).value = max;
+        }
+        let total = document.getElementById("total").innerHTML;
+        total = parseInt(total) + parseInt(elem.innerHTML.split("₹")[1].split("/-")[0])
+        document.getElementById("total").innerHTML = total;
+    }
+}
+function down(e, min, id) {
+    e.preventDefault()
+    const elem = document.getElementById(`label${id}`)
+    if(elem.classList.contains("click_here")){
+        console.log("called")   
+        document.getElementById(`myNumber${id}`).value = parseInt(document.getElementById(`myNumber${id}`).value) - 1;
+        if (document.getElementById(`myNumber${id}`).value <= parseInt(min)) {
+            document.getElementById(`myNumber${id}`).value = min;
+        }
+        let total = document.getElementById("total").innerHTML;
+        total = parseInt(total) - parseInt(elem.innerHTML.split("₹")[1].split("/-")[0])
+        document.getElementById("total").innerHTML = total;
+    }
+}
+
+
 async function orderPickup(id){
     let elem = document.getElementById("fillRestaurants")
     document.getElementsByClassName("containerFull")[0] ? document.getElementsByClassName("containerFull")[0].remove() : ""
@@ -160,6 +190,15 @@ async function orderPickup(id){
                                 <div class="menu-item my-2" style="width: 40%;">
                                     <input class="d-none" type="checkbox" id="menu${menu.id}" name="menu${menu.id}" value="menu${menu.id}">
                                     <label id="label${menu.id}" class="p-2 my-2 rounded" for="menu${menu.id}" style="width: 100%; box-shadow: 0px 0px 15px #0000003b;" onclick="selectMenu('label${menu.id}')">${menu.name} <span style="font-weight: bold; color: #ff9900;">₹${menu.price}/-</span></label>
+                                    <div class="input-group">
+                                        <div class="input-group-btn bg-danger">
+                                            <button type="button" id="ifdown${menu.id}" class="btn btn-default" onclick=" down(event, '0', ${menu.id})"><span class="bx bx-minus text-white"></span></button>
+                                        </div>
+                                        <input style="padding: 0.7rem 0.5rem;" type="text" readonly id="myNumber${menu.id}" class="form-control input-number" value="0" />
+                                        <div class="input-group-btn bg-success">
+                                            <button type="button" id="ifup${menu.id}" class="btn btn-default" onclick="up(event, '10', ${menu.id})"><span class="bx bx-plus text-white"></span></button>
+                                        </div>
+                                    </div>
                                 </div>
                                 `
                             }).join("")
@@ -183,11 +222,16 @@ function selectMenu(id){
     const total = document.getElementById("total")
     let totalAmount = parseInt(total.innerHTML)
     if(elem.classList.contains("click_here")){
+        document.getElementById("myNumber"+id.split("label")[1]).value = 1
         console.log("here")
         totalAmount += parseInt(elem.innerHTML.split("₹")[1].split("/-")[0])
     }
     else{
-        totalAmount -= parseInt(elem.innerHTML.split("₹")[1].split("/-")[0])
+        console.log(totalAmount)
+        let quantity = document.getElementById("myNumber"+id.split("label")[1]).value
+        console.log(totalAmount - (parseInt(elem.innerHTML.split("₹")[1].split("/-")[0]) * parseInt(quantity)))
+        totalAmount = totalAmount - (parseInt(elem.innerHTML.split("₹")[1].split("/-")[0]) * parseInt(quantity))
+        document.getElementById("myNumber"+id.split("label")[1]).value = 0
     }
     total.innerHTML = totalAmount
 }
@@ -341,8 +385,12 @@ async function payOrder(e, resturent){
         return
     }
     const menu_items_ids = selected_menu_items.map((menu)=>{
-        return menu.children[0].id.split("menu")[1]
+        return {
+            id : menu.children[0].id.split("menu")[1],
+            quantity : document.getElementById("myNumber"+menu.children[0].id.split("menu")[1]).value
+        }
     })
+
     const response = await fetch("https://bookeat.xyz/api/restaurant/get_order_amount/",{
         method:"POST",
         body:JSON.stringify({

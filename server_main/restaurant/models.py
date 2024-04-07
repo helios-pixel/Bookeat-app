@@ -68,6 +68,7 @@ class CustomerOrderItem(BaseModel):
 class CustomerOrderItemDetails(BaseModel):
     order_item = models.ForeignKey(CustomerOrderItem, on_delete=models.CASCADE)
     food_item = models.ForeignKey(ResturentFoodItem, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=0)
     price = models.FloatField(default=0)
 
     def __str__(self):

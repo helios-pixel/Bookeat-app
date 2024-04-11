@@ -47,7 +47,7 @@
         }
 
         .form-cont{
-            width: 60vw;
+            width: 30rem;
             display: flex;
             flex-direction: column;
         }
@@ -86,7 +86,6 @@
             margin-right: 1rem;
         }
     </style>
-
 </head>
 <body>
 
@@ -120,7 +119,7 @@
 						<div class="mainmenu">
 							<ul id="navChilds">                    
 								<li>
-									<a href="./home-02.html">Home</a>
+									<a href="javascript:void(0)">Home</a>
 								</li>
 							</ul>
 							<div class="menu-btn-wrap flex-shrink-0 d-lg-none pb-5">
@@ -170,7 +169,7 @@
 								<div class="hero-info text-center">
 									<span class="hero-tag text-white">Feeling Hungry? Let’s</span>
 									<h1 class="text_color_white">Discover Divine Taste Of BookEat</h1>
-									<a class='common-btn mt-4' href='#'><span>My Restaurants</span></a>
+									<a class='common-btn mt-4' href='#'><span>BOOK TABLE</span></a>
 								</div>
 							</div>
 						</div>
@@ -205,10 +204,17 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="section-title text-center">
-						<span>Your</span>
+						<span>Top</span>
 						<h2 class="mt-2">Restaurants</h2>
 					</div>
 				</div>
+			</div>
+			<div class="row pt-60 gy-4" id="">
+				<form class="d-flex justify-content-between container" onsubmit="lookupRestaur(event)">
+					<input type="text" name="" placeholder="Source" class="p-2 border border-dark m-3 rounded-3" id="sourceRestaur">
+					<input type="text" name="" placeholder="Destination" class="p-2 border border-dark m-3 rounded-3" id="destRestaur">
+					<input type="submit" name="" id="" class="p-2 m-3 rounded-3 common-btn" value="Search">
+				</form>
 			</div>
 			<div class="row pt-60 gy-4" id="fillRestaurants">
 			</div>
@@ -216,7 +222,6 @@
 	</div>
 
 	<!-- Discount Menu End -->
-
 
 	<!-- Footer -->
 
@@ -302,8 +307,8 @@
 
 
 </div>
-<script src="assets/helper/home.js"></script>
-<script src="assets/helper/yourRest.js"></script>
+<script src="assets/helper/browse.js"></script>
+<script src="assets/helper/restaurants.js"></script>
 <script src="assets/helper/clientAuth.js"></script>
 <!-- Jquery JS -->
 <script src="assets/js/jquery-3.7.1.min.js"></script>
@@ -328,6 +333,7 @@
 <script src="assets/js/select2.js"></script>
 <!-- Main JS -->
 <script src="assets/js/main.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </body>
 
 <!-- Mirrored from BookEat.netlify.app/BookEat/home-02 by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 18 Jan 2024 14:04:28 GMT -->

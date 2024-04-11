@@ -52,9 +52,6 @@ const loadCustomer =()=>{
     const element = document.createElement('li');
     element.innerHTML = `
         <a href="./restaurants.html">Restaurants</a>
-        
-		<a href="./browse.html" style="margin-left: 20px;">On the go locator [Experimental]</a>
-								
     `
     document.getElementById('navChilds').appendChild(element)
     const hamburgerMenuListElement = document.createElement("div")

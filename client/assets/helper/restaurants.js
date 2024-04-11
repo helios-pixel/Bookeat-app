@@ -33,6 +33,58 @@ async function loadRestaurants(){
     }
 }
 
+async function lookupRestaur(e){
+    e.preventDefault()
+    const source = document.getElementById("sourceRestaur").value
+    const destination = document.getElementById("destRestaur").value
+    const elem = document.getElementById("fillRestaurants")
+    elem.innerHTML = `<h3 class="text-center">Loading...</h3>`
+    const response = await fetch("https://bookeat.xyz/api/restaurant/get_resturent/")
+    const data = await response.json()
+    console.log("data is ",data)
+    if(data.status==="success"){
+        console.log(data.data)
+        const restaurantArray = Array.from(data.data)
+        const filteredRestaurants = restaurantArray.filter((restaurant)=>{
+            return restaurant.source?.toLowerCase().includes(source.toLowerCase()) && restaurant.destination?.toLowerCase().includes(destination.toLowerCase())
+        });
+
+        if (filteredRestaurants.length === 0) {
+            elem.innerHTML = `<h3 class="text-center">No Restaurants Found</h3>`;
+        } else {
+            elem.innerHTML = `
+            <div class="alert alert-success" role="alert">
+                <strong>Restaurants Found</strong> ${filteredRestaurants.length} Restaurants Found from <strong>${source}</strong> to <strong>${destination}</strong>, <a href="#" class="text-end" onclick="loadRestaurants()"><u>Clear Search<u></a>
+            </div>
+            ` 
+            elem.innerHTML += filteredRestaurants.map((restaurant)=>{
+                return `
+                <div class="col-sm-6 col-lg-4 col-xl-6 wow fadeIn" data-wow-delay=".3s"}">
+                <div class="discount-menu-box d-flex flex-column flex-xl-row align-items-center">
+                    <div class="discount-menu-img flex-shrink-0">
+                        <img class="w-100" src="assets/images/food-menu/discount-1.png" alt="">
+                    </div>
+                    <div class="discount-menu-info">
+                        <h2 class="h2">${restaurant.name}</h2>
+                        <h3 style="font-size: large; color: gray;">Owner - (${restaurant.owner})</h3>
+                        <p>${restaurant.address}</p>
+                        ${restaurant.is_active ? `<span class="discount-price bg-success text-light p-2 rounded my-2 d-inline-block">Open</span>` : `<span class="discount-price bg-danger text-light p-2 rounded my-2 d-inline-block">Closed</span>`}
+                        ${restaurant.tables_available ? `<span class="discount-price text-success d-inline-block">Tables Available (${restaurant.tables_available})</span>` : `<span class="discount-price text-danger p-2 d-inline-block">No Tables Available</span>`}
+                        <a class='common-btn' href='#' onclick="loadDetails(${restaurant.id})"><span>See Details <hello class="bi bi-eye"></hello></span></a>
+                    </div>
+                </div>
+            </div>
+                `;
+            }).join("");
+        }
+    }
+    
+        else if(data.status==="failed"){
+            const elem = document.getElementById("fillRestaurants")
+            elem.innerHTML = `<h3 class="text-center">No Restaurants Found</h3>`
+        }
+}
+
 loadRestaurants()
 
 async function loadDetails(id){
@@ -47,12 +99,13 @@ async function loadDetails(id){
     const data = await response.json()
     console.log(data)
     if(data.status==="success"){
-    elem.innerHTML = `<div class="menu-book-box-wrap" id="menu-book"></div>`
+    elem.innerHTML = `<div class="menu-book-box-wrap" id="menu-book" id= "menu" style= "box-shadow: 27px 21px 18px 13px rgba(133,133,133,1);"></div>`
     elem = document.getElementById("menu-book")
         const menus = Array.from(data.data)
         elem.innerHTML = menus.map((menu)=>{
             return `
-            <div class="menu-book-box d-flex justify-content-between align-items-center" ${!menu.stock ? `style= "background: #e7e7e7;"` : ""}>
+            
+            <div class="menu-book-box d-flex justify-content-between align-items-center" ${!menu.stock ? `style= "background: #e7e7e7; "` : ""}>
             <div class="menu-book-info-wrap d-flex flex-column flex-xl-row align-items-xl-center">
                <div class="menu-book-img flex-shrink-0">
                   <img class="w-100" src="assets/images/food-menu/menu-book-11.png" alt="">
@@ -73,7 +126,7 @@ async function loadDetails(id){
         elem = document.getElementById("fillRestaurants")
         elem.innerHTML += ` <div class="col-12 text-center mt-4"> <a class="common-btn" onclick="loadRestaurants()"><span>Back <hello class="bi bi-arrow-left"></hello></span></a>
         <a class="common-btn" onclick="bookTable(${id})"><span>Book Table &nbsp;<hello class="bi bi-cart"></hello></span></a>
-        <a class="common-btn" onclick="orderPickup(${id})"><span>Order Pickup &nbsp;<hello class="bi bi-cart"></hello></span></a> </div>
+        <a class="common-btn" onclick="orderPickup(${id})"><span>Preorder Food &nbsp;<hello class="bi bi-cart"></hello></span></a> </div>
         `
     }
     else if(data.status==="failed"){
@@ -171,12 +224,12 @@ async function orderPickup(id){
                     <strong id="msg-al">Oh snap!</strong> <span id="alert-message"></span>
                 </div>
                 <form onsubmit="payOrder(event, ${id})" method="post" class="form-cont">
-                    <h3 class="text-center mb-2">Order Pickup</h3>
+                    <h3 class="text-center mb-2">Preorder Food</h3>
                     <label for="name">Your Name</label>
                     <div class="input-cont">
                         <i class="bx bx-user"></i><input type="text" id="name" placeholder="Your Name">
                     </div>
-                    <label for="name">Time for Pickup</label>
+                    <label for="name">Arrival Time (24h format): </label>
                     <div class="input-cont">
                         <i class="bx bx-user"></i><input type="time" required id="time" placeholder="Enter time of today only...">
                     </div>
@@ -477,54 +530,60 @@ async function payOrder(e, resturent){
     }
 }
 
-async function searchRestaur(e){
-    e.preventDefault()
-    const source = document.getElementById("sourceRestaur").value
-    const destination = document.getElementById("destRestaur").value
-    const elem = document.getElementById("fillRestaurants")
-    elem.innerHTML = `<h3 class="text-center">Loading...</h3>`
-    const response = await fetch("https://bookeat.xyz/api/restaurant/get_resturent/")
-    const data = await response.json()
-    console.log("data is ",data)
-    if(data.status==="success"){
-        console.log(data.data)
-        const restaurantArray = Array.from(data.data)
-        const filteredRestaurants = restaurantArray.filter((restaurant)=>{
-            return restaurant.source?.toLowerCase().includes(source.toLowerCase()) && restaurant.destination?.toLowerCase().includes(destination.toLowerCase())
-        });
-
-        if (filteredRestaurants.length === 0) {
-            elem.innerHTML = `<h3 class="text-center">No Restaurants Found</h3>`;
-        } else {
-            elem.innerHTML = `
-            <div class="alert alert-success" role="alert">
-                <strong>Restaurants Found</strong> ${filteredRestaurants.length} Restaurants Found from <strong>${source}</strong> to <strong>${destination}</strong>, <a href="#" class="text-end" onclick="loadRestaurants()"><u>Clear Search<u></a>
-            </div>
-            ` 
-            elem.innerHTML += filteredRestaurants.map((restaurant)=>{
-                return `
-                <div class="col-sm-6 col-lg-4 col-xl-6 wow fadeIn" data-wow-delay=".3s"}">
-                <div class="discount-menu-box d-flex flex-column flex-xl-row align-items-center">
-                    <div class="discount-menu-img flex-shrink-0">
-                        <img class="w-100" src="assets/images/food-menu/discount-1.png" alt="">
-                    </div>
-                    <div class="discount-menu-info">
-                        <h2 class="h2">${restaurant.name}</h2>
-                        <h3 style="font-size: large; color: gray;">Owner - (${restaurant.owner})</h3>
-                        <p>${restaurant.address}</p>
-                        ${restaurant.is_active ? `<span class="discount-price bg-success text-light p-2 rounded my-2 d-inline-block">Open</span>` : `<span class="discount-price bg-danger text-light p-2 rounded my-2 d-inline-block">Closed</span>`}
-                        ${restaurant.tables_available ? `<span class="discount-price text-success d-inline-block">Tables Available (${restaurant.tables_available})</span>` : `<span class="discount-price text-danger p-2 d-inline-block">No Tables Available</span>`}
-                        <a class='common-btn' href='#' onclick="loadDetails(${restaurant.id})"><span>See Details <hello class="bi bi-eye"></hello></span></a>
-                    </div>
-                </div>
-            </div>
-                `;
-            }).join("");
-        }
-    }
+async function searchRestaur(e) {
+    e.preventDefault();
+    const name = document.getElementById("sourceRestaur").value.trim(); // Retrieving restaurant name from the input field
+    const elem = document.getElementById("fillRestaurants");
+    elem.innerHTML = `<h3 class="text-center">Loading...</h3>`;
     
-        else if(data.status==="failed"){
-            const elem = document.getElementById("fillRestaurants")
-            elem.innerHTML = `<h3 class="text-center">No Restaurants Found</h3>`
+    try {
+        // Fetch restaurant data with the name parameter
+        const response = await fetch(`https://bookeat.xyz/api/restaurant/get_resturent/?name=${name}`);
+        const data = await response.json();
+        
+        if (data.status === "success") {
+            console.log(data.data);
+            const restaurantArray = Array.from(data.data);
+            
+            const filteredRestaurants = restaurantArray.filter((restaurant) => {
+                // Filter restaurants by name
+                return restaurant.name.toLowerCase().includes(name.toLowerCase());
+            });
+
+            if (filteredRestaurants.length === 0) {
+                elem.innerHTML = `<h3 class="text-center">No Restaurants Found</h3>`;
+            } else {
+                elem.innerHTML = `
+                <div class="alert alert-success" role="alert">
+                    <strong>Restaurants Found</strong> ${filteredRestaurants.length} Restaurants Found with name <strong>${name}</strong>, <a href="#" class="text-end" onclick="loadRestaurants()"><u>Clear Search</u></a>
+                </div>
+                `;
+
+                // Render filtered restaurants
+                elem.innerHTML += filteredRestaurants.map((restaurant) => {
+                    return `
+                    <div class="col-sm-6 col-lg-4 col-xl-6 wow fadeIn" data-wow-delay=".3s">
+                        <div class="discount-menu-box d-flex flex-column flex-xl-row align-items-center">
+                            <div class="discount-menu-img flex-shrink-0">
+                                <img class="w-100" src="assets/images/food-menu/discount-1.png" alt="">
+                            </div>
+                            <div class="discount-menu-info">
+                                <h2 class="h2">${restaurant.name}</h2>
+                                
+                                <p>${restaurant.address}</p>
+                                ${restaurant.is_active ? `<span class="discount-price bg-success text-light p-2 rounded my-2 d-inline-block">Open</span>` : `<span class="discount-price bg-danger text-light p-2 rounded my-2 d-inline-block">Closed</span>`}
+                                ${restaurant.tables_available ? `<span class="discount-price text-success d-inline-block">Tables Available (${restaurant.tables_available})</span>` : `<span class="discount-price text-danger p-2 d-inline-block">No Tables Available</span>`}
+                                <a class='common-btn' href='#menu' onclick="loadDetails(${restaurant.id})"><span>See Details <hello class="bi bi-eye"></hello></span></a>
+                            </div>
+                        </div>
+                    </div>`;
+                }).join("");
+            }
+        } else if (data.status === "failed") {
+            elem.innerHTML = `<h3 class="text-center">No Restaurants Found</h3>`;
         }
+    } catch (error) {
+        console.error("Error fetching restaurant data:", error);
+        elem.innerHTML = `<h3 class="text-center">An error occurred while fetching data. Please try again later.</h3>`;
+    }
 }

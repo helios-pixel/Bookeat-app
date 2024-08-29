@@ -1,7 +1,7 @@
 async function loadRestaurants(){
     const elem = document.getElementById("fillRestaurants")
     elem.innerHTML = `<h3 class="text-center">Loading...</h3>`
-    const response = await fetch("https://bookeat.xyz/api/restaurant/get_resturent/")
+    const response = await fetch("localhost/api/restaurant/get_resturent/")
     const data = await response.json()
     console.log("data is ",data)
     if(data.status==="success"){
@@ -39,7 +39,7 @@ async function lookupRestaur(e){
     const destination = document.getElementById("destRestaur").value
     const elem = document.getElementById("fillRestaurants")
     elem.innerHTML = `<h3 class="text-center">Loading...</h3>`
-    const response = await fetch("https://bookeat.xyz/api/restaurant/get_resturent/")
+    const response = await fetch("localhost/api/restaurant/get_resturent/")
     const data = await response.json()
     console.log("data is ",data)
     if(data.status==="success"){
@@ -90,7 +90,7 @@ loadRestaurants()
 async function loadDetails(id){
     let elem = document.getElementById("fillRestaurants")
     elem.innerHTML = `<h3 class="text-center">Loading...</h3>`
-    const response  = await fetch(`https://bookeat.xyz/api/restaurant/get_resturent_menu/`,{
+    const response  = await fetch(`localhost/api/restaurant/get_resturent_menu/`,{
         method:"POST",
         body:JSON.stringify({
             id
@@ -206,7 +206,7 @@ async function orderPickup(id){
     let elem = document.getElementById("fillRestaurants")
     document.getElementsByClassName("containerFull")[0] ? document.getElementsByClassName("containerFull")[0].remove() : ""
     elem.innerHTML += "<h3 class='text-center' id='loading'>Loading...</h3>"
-    const response = await fetch(`https://bookeat.xyz/api/restaurant/get_resturent_menu/`,{
+    const response = await fetch(`localhost/api/restaurant/get_resturent_menu/`,{
         method:"POST",
         body:JSON.stringify({
             id
@@ -317,7 +317,7 @@ async function paymentTable(e, resturent){
         return
     }
 
-    const response = await fetch("https://bookeat.xyz/api/restaurant/get_table_amount/",{
+    const response = await fetch("localhost/api/restaurant/get_table_amount/",{
         method:"POST",
         body:JSON.stringify({
             name,
@@ -367,7 +367,7 @@ async function paymentTable(e, resturent){
                     is_paid : true,
                 }
                 console.log(data)
-                const send_success_response = await fetch("https://bookeat.xyz/api/restaurant/create_customer_table_booking/",{
+                const send_success_response = await fetch("localhost/api/restaurant/create_customer_table_booking/",{
                     method:"POST",
                     body:JSON.stringify(data)
                 })
@@ -444,7 +444,7 @@ async function payOrder(e, resturent){
         }
     })
 
-    const response = await fetch("https://bookeat.xyz/api/restaurant/get_order_amount/",{
+    const response = await fetch("localhost/api/restaurant/get_order_amount/",{
         method:"POST",
         body:JSON.stringify({
             menu_items_ids,
@@ -493,7 +493,7 @@ async function payOrder(e, resturent){
                     menu_items : menu_items_ids
                 }
                 console.log(data)
-                const send_success_response = await fetch("https://bookeat.xyz/api/restaurant/create_customer_purchase/",{
+                const send_success_response = await fetch("localhost/api/restaurant/create_customer_purchase/",{
                     method:"POST",
                     body:JSON.stringify(data)
                 })
@@ -538,7 +538,7 @@ async function searchRestaur(e) {
     
     try {
         // Fetch restaurant data with the name parameter
-        const response = await fetch(`https://bookeat.xyz/api/restaurant/get_resturent/?name=${name}`);
+        const response = await fetch(`localhost/api/restaurant/get_resturent/?name=${name}`);
         const data = await response.json();
         
         if (data.status === "success") {

@@ -40,7 +40,7 @@ async function submitMyDetails(e){
     const phone = token.phone
     const address = inputElems[4].value
 
-    const response = await fetch(`https://bookeat.xyz/api/update_customer/`,{
+    const response = await fetch(`localhost/api/update_customer/`,{
         method: 'POST',
         body: JSON.stringify({
             fName : first_name,

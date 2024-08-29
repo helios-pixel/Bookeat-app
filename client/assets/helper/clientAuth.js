@@ -41,7 +41,7 @@ const signup = (e) => {
     // send the data to the server
     if (userType === 'diner') {
 
-    fetch('https://bookeat.xyz/api/create_customer/',
+    fetch('localhost/api/create_customer/',
         {
             method: 'POST',
             headers: {
@@ -93,7 +93,7 @@ const signup = (e) => {
         }
 
 
-        fetch('https://bookeat.xyz/api/create_resturent_owner/',
+        fetch('localhost/api/create_resturent_owner/',
         {
             method: 'POST',
             headers: {
@@ -157,7 +157,7 @@ const login = (e) => {
     // send the data to the server
 
     if (userType === 'diner') {
-        fetch('https://bookeat.xyz/api/customer_login/',
+        fetch('localhost/api/customer_login/',
 
             {
                 method: 'POST',
@@ -194,7 +194,7 @@ const login = (e) => {
             )
     }
     else{
-        fetch('https://bookeat.xyz/api/resturent_owner_login/',
+        fetch('localhost/api/resturent_owner_login/',
         {
             method: 'POST',
             headers: {
@@ -266,7 +266,7 @@ const submitPhnForPwd=(e) => {
     }
     // send the data to the server
 
-    const response = fetch('https://bookeat.xyz/api/forgot_password/',
+    const response = fetch('localhost/api/forgot_password/',
         {
             method: 'POST',
             headers: {
@@ -346,7 +346,7 @@ const submitOtpForPwd=(e, phone) => {
     }
     // send the data to the server
 
-    const response = fetch('https://bookeat.xyz/api/validate_otp/',
+    const response = fetch('localhost/api/validate_otp/',
         {
             method: 'POST',
             headers: {
@@ -438,7 +438,7 @@ const submitNewPwd = (e, phone) => {
     }
     // send the data to the server
 
-    const response = fetch('https://bookeat.xyz/api/reset_password/',
+    const response = fetch('localhost/api/reset_password/',
         {
             method: 'POST',
             headers: {

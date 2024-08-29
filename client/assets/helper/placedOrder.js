@@ -25,7 +25,7 @@ function loadCustomerFoodItems(data2){
 
 const loadRestaurantOrders = async (id)=>{
     console.log("hello")
-    const response2 = await fetch(`https://bookeat.xyz/api/restaurant/get_customer_purchase_for_owner/`,{
+    const response2 = await fetch(`localhost/api/restaurant/get_customer_purchase_for_owner/`,{
         method: 'POST',
         body: JSON.stringify({
             id:id

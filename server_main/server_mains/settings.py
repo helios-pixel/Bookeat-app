@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-dk56k8$%imzlkw)0z(flvtzx6@qj&i+xauvpe1gh=h-%graz$-'
+SECRET_KEY = 'django_secret_key'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -90,9 +90,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres', 
-        'USER': 'postgres.nhweoahhixxinaxlmdwm', 
-        'PASSWORD': 'sQpQvlUuOvMSKrOO',
-        'HOST': 'aws-0-ap-south-1.pooler.supabase.com', 
+        'USER': 'supabase_username', 
+        'PASSWORD': 'supabase_password',
+        'HOST': 'supabase_url', 
         'PORT': '5432',
     }
 }
@@ -140,7 +140,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-KEY_ID = "rzp_test_cuITzpvHjXU3KD"
-KEY_SECRET = "cTALsEUpER69Ulwat7DiycIg"
-ACCOUNT_SID = "AC299000e5ce0ddc31c2f07e187aedeabf"
-AUTH_TOKEN = "3327ca94b8c3fbeb247e58a401c3d934"
+KEY_ID = "redacted"
+KEY_SECRET = "redacted"
+ACCOUNT_SID = "redacted"
+AUTH_TOKEN = "redacted"

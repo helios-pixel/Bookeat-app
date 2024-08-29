@@ -64,7 +64,7 @@ function addRestaurant(e){
 
     // send data to server
 
-    fetch('https://bookeat.xyz/api/restaurant/create_resturent/',
+    fetch('localhost/api/restaurant/create_resturent/',
     {
         method: 'POST',
         headers: {
